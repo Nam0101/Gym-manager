@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}
+    PowerPack
+{% endblock %}
+
+{% block without_container %}
+<div class="container-fluid" id="homepage_after_login" style="padding: 0; height: 90%">
+  {% if wallpaper.photo %}
+  <img src="{{ wallpaper.photo }}" class="img-fluid">
+  {% else %}
+  <img src="{% static 'images/after_login.jpg' %}" class="img-fluid" alt="">
+  {% endif %}
+</div>
+{% endblock %}
