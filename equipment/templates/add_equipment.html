@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+{% load tags %}
+{% block title %}
+    Equipment
+{% endblock %}
+{% block content %}
+    <h1>Equipment</h1>
+    <ul>
+        {% for equipment in equipment_list %}
+            <li><a href="{% url 'equipment_detail' equipment.id %}">{{ equipment.name }}</a></li>
+        {% endfor %}
+    </ul>
+{% endblock %}
+

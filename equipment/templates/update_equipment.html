@@ -1,0 +1,65 @@
+{% extends 'base.html' %}
+{% load tags %}
+{% block title %}
+    Equipment
+{% endblock %}
+{% block content %}
+    <div class="container" style="margin-top: 3%">
+        {% if form.errors %}
+            {% for field in form %}
+                {% for error in field.errors %}
+                    <div class="alert alert-danger">
+                        {{ error|escape }}
+                    </div>
+                {% endfor %}
+            {% endfor %}
+            {% for error in form.non_field_errors %}
+                <div class="alert alert-danger">
+                    {{ error|escape }}
+                </div>
+            {% endfor %}
+        {% endif %}
+        <h3>Update Equipment</h3>
+        <hr>
+        <form method="POST" style="margin-top: 2%">
+            {% csrf_token %}
+            <div class="row">
+                <div class="form-group col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                    <label for="equipment_name">{{ form.equipment_name.label }}</label>
+                    {{ form.equipment_name | add_css:"form-control" }}
+                </div>
+                <div class="form-group col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                    <label for="equipment_code">{{ form.equipment_code.label }}</label>
+                    {{ form.equipment_code | add_css:"form-control" }}
+                </div>
+            </div>
+            <div class="row">
+                <div class="form-group col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                    <label for="equipment_quantity">{{ form.equipment_quantity.label }}</label>
+                    {{ form.equipment_quantity | add_css:"form-control" }}
+                </div>
+                <div class="form-group col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                    <label for="equipment_import_date">{{ form.equipment_import_date.label }}</label>
+                    {{ form.equipment_import_date | add_css:"form-control" }}
+                </div>
+            </div>
+            <div class="row">
+                <div class="form-group col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                    <label for="equipment_warranty_date">{{ form.equipment_warranty_date.label }}</label>
+                    {{ form.equipment_warranty_date | add_css:"form-control" }}
+                </div>
+                <div class="form-group col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                    <label for="equipment_origin">{{ form.equipment_origin.label }}</label>
+                    {{ form.equipment_origin | add_css:"form-control" }}
+                </div>
+            </div>
+            <div class="row">
+                <div class="form-group col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                    <label for="equipment_status">{{ form.equipment_status.label }}</label>
+                    {{ form.equipment_status | add_css:"form-control" }}
+                </div>
+            </div>
+            <button type="submit" id="submit" class="btn btn-primary">Update</button>
+        </form>
+    </div>
+{% endblock %}
