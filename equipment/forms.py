@@ -10,6 +10,7 @@ class SearchForm(forms.Form):
 from django import forms
 from .models import Equipment
 
+
 class EquipmentForm(forms.ModelForm):
     class Meta:
         model = Equipment
@@ -19,4 +20,3 @@ class EquipmentForm(forms.ModelForm):
             'equipment_import_date': forms.DateInput(attrs={'type': 'date'}),
             'equipment_warranty_date': forms.DateInput(attrs={'type': 'date'}),
         }
-

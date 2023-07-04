@@ -2,6 +2,7 @@
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 from django.db.models.signals import post_save
 from django.shortcuts import render, get_object_or_404, redirect
+from django.contrib import messages
 
 from equipment.forms import SearchForm, EquipmentForm
 from equipment.models import Equipment
@@ -10,7 +11,6 @@ from notifications.config import my_handler
 # views.py
 from .forms import EquipmentForm
 from .models import STATUS_CHOICES
-
 
 
 def model_save(model):
@@ -38,11 +38,12 @@ def add_equipment(request):
     if request.method == 'POST':
         form = EquipmentForm(request.POST)
         if form.is_valid():
-            form.save()
-            equipment = Equipment.objects.get(equipment_code=form.cleaned_data.get('equipment_code'))
-            if equipment:
+            equipment_code = form.cleaned_data.get('equipment_code')
+            if Equipment.objects.filter(equipment_code=equipment_code).exists():
+                messages.error(request, f"An equipment with code {equipment_code} already exists.")
+            else:
+                form.save()
                 return redirect('view_equipment')
-            return redirect('view_equipment')
     else:
         form = EquipmentForm()
     context = {'form': form, 'STATUS_CHOICES': STATUS_CHOICES}
