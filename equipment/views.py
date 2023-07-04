@@ -7,6 +7,11 @@ from equipment.forms import SearchForm, EquipmentForm
 from equipment.models import Equipment
 from notifications.config import my_handler
 
+# views.py
+from .forms import EquipmentForm
+from .models import STATUS_CHOICES
+
+
 
 def model_save(model):
     post_save.disconnect(my_handler, sender=Equipment)
@@ -33,12 +38,15 @@ def add_equipment(request):
     if request.method == 'POST':
         form = EquipmentForm(request.POST)
         if form.is_valid():
-            model_save(form.save(commit=False))
+            form.save()
+            equipment = Equipment.objects.get(equipment_code=form.cleaned_data.get('equipment_code'))
+            if equipment:
+                return redirect('view_equipment')
             return redirect('view_equipment')
     else:
         form = EquipmentForm()
-    context = {'form': form}
-    return render(request, "add_equipment.html",context)
+    context = {'form': form, 'STATUS_CHOICES': STATUS_CHOICES}
+    return render(request, "add_equipment.html", context)
 
 
 def search_equipment(request):

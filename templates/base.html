@@ -1,9 +1,9 @@
 <!doctype html>
 {% load static %}
 <html lang="en">
-  <head>
+<head>
     <link rel="shortcut icon" type="image/png" href="{% static 'HUST_logo.jpg' %}"/>
-      <!-- Required meta tags -->
+    <!-- Required meta tags -->
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
@@ -16,74 +16,89 @@
     <link rel="stylesheet" href="{% static 'css/custom.css' %}">
 
     <title>{% block title %}{% endblock %}</title>
-  </head>
-  <body>
+</head>
+<body>
 <nav class="navbar navbar-expand-lg navbar-dark navbar-custom">
     <a class="navbar-brand" href="/"><img src="{% static 'images/p_logo.png' %}" class="img-fluid" style="width: 200px"></a>
-      <!-- Power<span style="color: red">Pack</span> Fitness Club -->
-      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+    <!-- Power<span style="color: red">Pack</span> Fitness Club -->
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
+            aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
-      </button>
-      {% if request.user.username %}
-      <div class="collapse navbar-collapse" id="navbarNav">
+    </button>
+    {% if request.user.username %}
+        <div class="collapse navbar-collapse" id="navbarNav">
         <ul class="navbar-nav mr-auto">
-          <li class="nav-item {% if request.resolver_match.url_name == 'members' %} active {% endif %}">
-            <a class="nav-link" href="{% url 'members'%}">New Member<span class="sr-only">(current)</span></a>
-          </li>
-          <li class="nav-item  {% if request.resolver_match.url_name == 'view_member' %} active {% endif %}">
-            <a class="nav-link" href="{% url 'view_member'%}">View All Members</a>
-          </li>
-          <li class="nav-item {% if request.resolver_match.url_name == 'reports' %} active {% endif %}">
-            <a class ="nav-link" href="{% url 'reports'%}">Reports</a>
 
-<li class="nav-item dropdown">
-    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-        Equipment
-    </a>
-    <div class="dropdown-menu bg-light" aria-labelledby="navbarDropdown">
-        <a class="dropdown-item text-primary my-1 py-2" href="{% url 'add_equipment' %}">Add Equipment</a>
-        <a class="dropdown-item text-primary my-1 py-2" href="{% url 'view_equipment' %}">View Equipment</a>
-    </div>
-</li>
+            <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown"
+                   aria-haspopup="true" aria-expanded="false">
+                    Members
+                </a>
+                <div class="dropdown-menu bg-light" aria-labelledby="navbarDropdown">
+                    <a class="dropdown-item text-primary my-1 py-2" href="{% url 'members' %}">New Member</a>
+                    <a class="dropdown-item text-primary my-1 py-2" href="{% url 'view_member' %}">View All Members</a>
+                </div>
+            </li>
 
-    <li class="nav-item  {% if request.resolver_match.url_name == 'view_member' %} active {% endif %}">
-        <a class="nav-link" href="{% url 'view_member'%}">Business statistics</a>
-    </li>
-    <li class="nav-item  {% if request.resolver_match.url_name == 'notifications' %} active {% endif %}">
-        <a class="nav-link" href="{% url 'notifications'%}">Notifications <span class="badge badge-success">{{ subs_end_today_count }}</span></a>
-    </ul>
+            {#            <li class="nav-item {% if request.resolver_match.url_name == 'members' %} active {% endif %}">#}
+            {#                <a class="nav-link" href="{% url 'members' %}">New Member<span class="sr-only">(current)</span></a>#}
+            {#            </li>#}
+            {#            <li class="nav-item  {% if request.resolver_match.url_name == 'view_member' %} active {% endif %}">#}
+            {#                <a class="nav-link" href="{% url 'view_member' %}">View All Members</a>#}
+            {#            </li>#}
+            <li class="nav-item {% if request.resolver_match.url_name == 'reports' %} active {% endif %}">
+                <a class="nav-link" href="{% url 'reports' %}">Reports</a>
 
-    <ul class="navbar-nav ml-auto">
-        <li class="nav-item {% if request.resolver_match.url_name == 'change_password' %} active {% endif %}">
-            <a class="nav-link" href="{% url 'change_password'%}">Change Password</a>
-        </li>
-        {#          <li class="nav-item  {% if request.resolver_match.url_name == 'set_wallpaper' %} active {% endif %}">#}
-        {#              <a class="nav-link" href="{% url 'set_wallpaper'%}">Wallpaper<span class="sr-only">(current)</span></a>#}
-        {#          </li>#}
-        <li class="nav-item">
-            <a class="nav-link" href="{% url 'logout'%}">Logout</a>
-        </li>
-    </ul>
+            <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown"
+                   aria-haspopup="true" aria-expanded="false">
+                    Equipment
+                </a>
+                <div class="dropdown-menu bg-light" aria-labelledby="navbarDropdown">
+                    <a class="dropdown-item text-primary my-1 py-2" href="{% url 'add_equipment' %}">Add Equipment</a>
+                    <a class="dropdown-item text-primary my-1 py-2" href="{% url 'view_equipment' %}">View Equipment</a>
+                </div>
+            </li>
+
+            <li class="nav-item  {% if request.resolver_match.url_name == 'view_member' %} active {% endif %}">
+                <a class="nav-link" href="{% url 'view_member' %}">Business statistics</a>
+            </li>
+            <li class="nav-item  {% if request.resolver_match.url_name == 'notifications' %} active {% endif %}">
+                <a class="nav-link" href="{% url 'notifications' %}">Notifications <span
+                        class="badge badge-success">{{ subs_end_today_count }}</span></a>
+        </ul>
+
+        <ul class="navbar-nav ml-auto">
+            <li class="nav-item {% if request.resolver_match.url_name == 'change_password' %} active {% endif %}">
+                <a class="nav-link" href="{% url 'change_password' %}">Change Password</a>
+            </li>
+            {#          <li class="nav-item  {% if request.resolver_match.url_name == 'set_wallpaper' %} active {% endif %}">#}
+            {#              <a class="nav-link" href="{% url 'set_wallpaper'%}">Wallpaper<span class="sr-only">(current)</span></a>#}
+            {#          </li>#}
+            <li class="nav-item">
+                <a class="nav-link" href="{% url 'logout' %}">Logout</a>
+            </li>
+        </ul>
     {% endif %}
     </div>
-    </nav>
+</nav>
 
-    {% block without_container %}
+{% block without_container %}
+
+{% endblock %}
+
+<div class="container">
+    {% block content %}
 
     {% endblock %}
+</div>
 
-    <div class="container">
-        {% block content %}
-
-        {% endblock %}
-    </div>
-
-    <!-- Optional JavaScript -->
-    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
-    <script src="{% static 'js/jquery.min.js' %}"></script>
-    <script src="{% static 'js/popper.min.js' %}"></script>
-    <script src="{% static 'js/bootstrap.min.js' %}"></script>
-    <script src="{% static 'js/bootstrap.bundle.js' %}"></script>
-    {% block javascript %}{% endblock %}
-  </body>
+<!-- Optional JavaScript -->
+<!-- jQuery first, then Popper.js, then Bootstrap JS -->
+<script src="{% static 'js/jquery.min.js' %}"></script>
+<script src="{% static 'js/popper.min.js' %}"></script>
+<script src="{% static 'js/bootstrap.min.js' %}"></script>
+<script src="{% static 'js/bootstrap.bundle.js' %}"></script>
+{% block javascript %}{% endblock %}
+</body>
 </html>

@@ -1,14 +1,42 @@
+<!-- add_equipment.html -->
 {% extends 'base.html' %}
+{% load widget_tweaks %}
 {% load tags %}
 {% block title %}
-    Equipment
+    Add Equipment
 {% endblock %}
 {% block content %}
-    <h1>Equipment</h1>
-    <ul>
-        {% for equipment in equipment_list %}
-            <li><a href="{% url 'equipment_detail' equipment.id %}">{{ equipment.name }}</a></li>
-        {% endfor %}
-    </ul>
+    <h1>Add Equipment</h1>
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        <div class="form-group">
+            <label for="{{ form.equipment_name.auto_id }}">{{ form.equipment_name.label }}</label>
+            {{ form.equipment_name|add_class:"form-control" }}
+        </div>
+        <div class="form-group">
+            <label for="{{ form.equipment_code.auto_id }}">{{ form.equipment_code.label }}</label>
+            {{ form.equipment_code|add_class:"form-control" }}
+        </div>
+        <div class="form-group">
+            <label for="{{ form.equipment_quantity.auto_id }}">{{ form.equipment_quantity.label }}</label>
+            {{ form.equipment_quantity|add_class:"form-control" }}
+        </div>
+        <div class="form-group">
+            <label for="{{ form.equipment_import_date.auto_id }}">{{ form.equipment_import_date.label }}</label>
+            {{ form.equipment_import_date|add_class:"form-control" }}
+        </div>
+        <div class="form-group">
+            <label for="{{ form.equipment_warranty_date.auto_id }}">{{ form.equipment_warranty_date.label }}</label>
+            {{ form.equipment_warranty_date|add_class:"form-control" }}
+        </div>
+        <div class="form-group">
+            <label for="{{ form.equipment_origin.auto_id }}">{{ form.equipment_origin.label }}</label>
+            {{ form.equipment_origin|add_class:"form-control" }}
+        </div>
+        <div class="form-group">
+            <label for="{{ form.equipment_status.auto_id }}">{{ form.equipment_status.label }}</label>
+            {{ form.equipment_status|add_class:"form-control" }}
+        </div>
+        <input type="submit" class="btn btn-primary" value="Add Equipment">
+    </form>
 {% endblock %}
-
