@@ -8,9 +8,12 @@ from django.core.files.storage import FileSystemStorage
 from .models import Wallpaper, WallpaperForm
 from django.conf import settings
 from notifications.config import get_notification_count, run_notifier
+from django.contrib.auth.models import Group
+
 
 def homepage(request):
     return render(request, 'homepage.html')
+
 
 def homepage_after_login(request):
     # run_notifier()
@@ -18,7 +21,18 @@ def homepage_after_login(request):
         return render(request, 'homepage_after_login.html')
     else:
         wallpaper = Wallpaper.objects.filter()[:1].get()
-        return render(request, 'homepage_after_login.html', {'wallpaper': wallpaper, 'subs_end_today_count': get_notification_count()})
+        # Check if user is in MEMBER group
+        member_group = Group.objects.get(name='MEMBER')
+        if member_group in request.user.groups.all():
+            # User is in MEMBER group
+            context = {'wallpaper': wallpaper, 'subs_end_today_count': get_notification_count(),
+                       'permission_level': 'reviews'}
+        else:
+            # User is not in MEMBER group
+            context = {'wallpaper': wallpaper, 'subs_end_today_count': get_notification_count(),
+                       'permission_level': 'all'}
+        return render(request, 'homepage_after_login.html', context)
+
 
 def set_wallpaper(request):
     if request.method == 'POST':
@@ -35,9 +49,11 @@ def set_wallpaper(request):
                 object.save()
             else:
                 form.save()
-        return render(request, 'set_wallpaper.html', {'form': WallpaperForm(), 'success':'Successfully Changed the Wallpaper!'})
+        return render(request, 'set_wallpaper.html',
+                      {'form': WallpaperForm(), 'success': 'Successfully Changed the Wallpaper!'})
     else:
         return render(request, 'set_wallpaper.html', {'form': WallpaperForm()})
+
 
 def change_password(request):
     if request.method == 'POST':

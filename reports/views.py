@@ -26,7 +26,9 @@ def export_all(user_obj):
 
 
 def reports(request):
+    context = {}
     if request.method == 'POST':
+
         form = GenerateReportForm(request.POST)
         if form.is_valid():
             if request.POST.get('month') and request.POST.get('year') and request.POST.get('batch'):

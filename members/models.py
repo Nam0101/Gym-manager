@@ -2,6 +2,10 @@ from django.db import models
 from django.forms import ModelForm
 from django import forms
 import datetime
+from django.db import models
+from django.contrib.auth.models import AbstractUser, User
+
+from Gymnasium import settings
 
 SUBSCRIPTION_TYPE_CHOICES = (
     ('gym', 'Gym'),
@@ -41,16 +45,19 @@ BATCH = (
 )
 
 
+
+
+
 class Member(models.Model):
     member_id = models.AutoField(primary_key=True)
-    first_name = models.CharField(('First Name'), max_length=50)
-    last_name = models.CharField(('Last Name'), max_length=50)
-    mobile_number = models.CharField(('Mobile Number'), max_length=10, unique=True)
+    first_name = models.CharField('First Name', max_length=50)
+    last_name = models.CharField('Last Name', max_length=50)
+    mobile_number = models.CharField('Mobile Number', max_length=10, unique=True)
     email = models.EmailField(null=True, blank=True)
     address = models.CharField(max_length=300, blank=True)
-    medical_history = models.CharField(('Medical History'), max_length=300, blank=True, default='None')
+    medical_history = models.CharField('Medical History', max_length=300, blank=True, default='None')
     admitted_on = models.DateField(auto_now_add=True)
-    registration_date = models.DateField(('Registration Date'), default='dd/mm/yyyy')
+    registration_date = models.DateField('Registration Date', default='dd/mm/yyyy')
     registration_upto = models.DateField()
     dob = models.DateField(default='dd/mm/yyyy')
     subscription_type = models.CharField(
@@ -80,7 +87,7 @@ class Member(models.Model):
     photo = models.FileField(upload_to='photos/', blank=True)
     notification = models.IntegerField(default=2, blank=True)
     stop = models.IntegerField('Status', choices=STATUS, default=STATUS[0][0], blank=True)
-
+    user = models.OneToOneField(User, on_delete=models.CASCADE, null=True)
     def __str__(self):
         return self.first_name + ' ' + self.last_name
 
@@ -90,8 +97,6 @@ class AddMemberForm(ModelForm):
         super(AddMemberForm, self).__init__(*args, **kwargs)
         self.fields['first_name'].error_messages = {'required': 'Please enter first name'}
         self.fields['last_name'].error_messages = {'required': 'Please enter last name'}
-
-    class Meta:
         model = Member
         # fields = ['first_name', 'last_name', 'mobile_number', 'email', 'address', 'subscription_type', 'subscription_period', 'amount']
         fields = '__all__'
@@ -115,7 +120,6 @@ class AddMemberForm(ModelForm):
                 return mobile_number
             else:
                 raise forms.ValidationError('Mobile number should be 10 digits long.')
-        return mobile_number
 
     def clean_amount(self):
         amount = self.cleaned_data.get('amount')
@@ -139,6 +143,7 @@ class AddMemberForm(ModelForm):
 
 class SearchForm(forms.Form):
     search = forms.CharField(label='Search Member', max_length=100, required=False)
+
     def clean_search(self, *args, **kwargs):
         search = self.cleaned_data.get('search')
         if search == '':

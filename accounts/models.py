@@ -1,3 +1,4 @@
+from django.contrib.auth.models import AbstractUser
 from django.db import models
 from django.forms import ModelForm
 
@@ -11,3 +12,5 @@ class WallpaperForm(ModelForm):
     class Meta:
         model = Wallpaper
         fields = '__all__'
+
+
