@@ -45,9 +45,6 @@ BATCH = (
 )
 
 
-
-
-
 class Member(models.Model):
     member_id = models.AutoField(primary_key=True)
     first_name = models.CharField('First Name', max_length=50)
@@ -87,7 +84,8 @@ class Member(models.Model):
     photo = models.FileField(upload_to='photos/', blank=True)
     notification = models.IntegerField(default=2, blank=True)
     stop = models.IntegerField('Status', choices=STATUS, default=STATUS[0][0], blank=True)
-    user = models.OneToOneField(User, on_delete=models.CASCADE, null=True)
+    user = models.OneToOneField(User, on_delete=models.CASCADE, null=True, blank=True)
+
     def __str__(self):
         return self.first_name + ' ' + self.last_name
 
@@ -95,12 +93,13 @@ class Member(models.Model):
 class AddMemberForm(ModelForm):
     def __init__(self, *args, **kwargs):
         super(AddMemberForm, self).__init__(*args, **kwargs)
-        self.fields['first_name'].error_messages = {'required': 'Please enter first name'}
-        self.fields['last_name'].error_messages = {'required': 'Please enter last name'}
+        self.fields['first_name'].error_messages = {'required': 'Please enter the first name'}
+        self.fields['last_name'].error_messages = {'required': 'Please enter the last name'}
+
+    class Meta:
         model = Member
-        # fields = ['first_name', 'last_name', 'mobile_number', 'email', 'address', 'subscription_type', 'subscription_period', 'amount']
         fields = '__all__'
-        exclude = ['registration_upto']
+        exclude = ['user', 'registration_upto']
         widgets = {
             'registration_date': forms.DateInput(attrs={'class': 'datepicker form-control', 'type': 'date'}),
             'address': forms.Textarea(attrs={'cols': 80, 'rows': 3}),
@@ -108,6 +107,7 @@ class AddMemberForm(ModelForm):
             'dob': forms.DateInput(attrs={'class': 'datepicker form-control', 'type': 'date'}),
             'photo': forms.FileInput(attrs={'accept': 'image/*;capture=camera'})
         }
+
 
     def clean_mobile_number(self, *args, **kwargs):
         mobile_number = self.cleaned_data.get('mobile_number')

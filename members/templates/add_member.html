@@ -52,6 +52,7 @@
     {% endif %}
     <form method="POST" action="{% url 'add_member' %}" enctype="multipart/form-data">
         {% csrf_token %}
+
         <div class="row">
           <div class="col-md-3">
             <img src="/media/default.jpg" class="img-fluid">

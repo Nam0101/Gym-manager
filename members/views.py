@@ -1,4 +1,4 @@
-from django.contrib.auth.models import User
+from django.contrib.auth.models import User, Group
 from django.shortcuts import render, redirect, reverse
 from django.http import JsonResponse
 from django.core import serializers
@@ -14,7 +14,6 @@ from notifications.config import get_notification_count
 from django.db.models.signals import post_save
 from notifications.config import my_handler
 from django.contrib import messages
-
 
 def model_save(model):
     post_save.disconnect(my_handler, sender=Member)
@@ -78,52 +77,66 @@ def view_member(request):
     return render(request, 'view_member.html', context)
 
 
+def create_user(request, member):
+    username = member.first_name.lower() + member.last_name.lower()
+    password = member.mobile_number
+    user = User.objects.create_user(username=username, password=password)
+    member.user = user
+    model_save(member)
+
+
+from django.contrib.auth.models import User
+
 def add_member(request):
     view_all = Member.objects.all()
-    success = 0
+    success = None
     member = None
+
     if request.method == 'POST':
         form = AddMemberForm(request.POST, request.FILES)
         if form.is_valid():
             temp = form.save(commit=False)
             temp.first_name = request.POST.get('first_name').capitalize()
             temp.last_name = request.POST.get('last_name').capitalize()
-            temp.registration_upto = parser.parse(request.POST.get('registration_date')) + delta.relativedelta(
-                months=int(request.POST.get('subscription_period')))
+            temp.registration_upto = parser.parse(request.POST.get('registration_date')) + delta.relativedelta(months=int(request.POST.get('subscription_period')))
             if request.POST.get('fee_status') == 'pending':
                 temp.notification = 1
-
-            model_save(temp)
+            username = temp.email
+            password = temp.mobile_number
+            user = User.objects.create_user(username=username, password=password)
+            temp.user = user
+            temp.save()
+            group = Group.objects.get(name='MEMBER')
+            user.groups.add(group)
             success = 'Successfully Added Member'
+            # member = Member.objects.last()
 
-            # Add payments if payment is 'paid'
             if temp.fee_status == 'paid':
                 payments = Payments(
                     user=temp,
                     payment_date=temp.registration_date,
                     payment_period=temp.subscription_period,
-                    payment_amount=temp.amount)
+                    payment_amount=temp.amount
+                )
                 payments.save()
 
             form = AddMemberForm()
             member = Member.objects.last()
-            user = User.objects.create_user(username=temp.email, password=temp.mobile_number)
-            user.save()
-
-        context = {
-            'add_success': success,
-            'form': form,
-            'member': member,
-            'subs_end_today_count': get_notification_count(),
-        }
-        return render(request, 'add_member.html', context)
+        else:
+            print(form.errors)
     else:
         form = AddMemberForm()
-        context = {
-            'form': form,
-            'subs_end_today_count': get_notification_count(),
-        }
+
+    context = {
+        'add_success': success,
+        'form': form,
+        'member': member,
+        'subs_end_today_count': get_notification_count(),
+    }
     return render(request, 'add_member.html', context)
+
+
+
 
 
 def view_member_detail(request):
