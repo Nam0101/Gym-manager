@@ -1,19 +1,21 @@
-from django.contrib.auth.models import User, Group
-from django.shortcuts import render, redirect, reverse
-from django.http import JsonResponse
-from django.core import serializers
-from .models import AddMemberForm, Member, SearchForm, UpdateMemberGymForm, UpdateMemberInfoForm
-import datetime, csv
-from django.http import HttpResponse
-import dateutil.relativedelta as delta
+import csv
+import datetime
+
 import dateutil.parser as parser
-from django.core.files.storage import FileSystemStorage
-from payments.models import Payments
-from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
-from notifications.config import get_notification_count
-from django.db.models.signals import post_save
-from notifications.config import my_handler
+import dateutil.relativedelta as delta
 from django.contrib import messages
+from django.contrib.auth.models import Group
+from django.core.files.storage import FileSystemStorage
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+from django.db.models.signals import post_save
+from django.http import HttpResponse
+from django.shortcuts import render, redirect
+
+from notifications.config import get_notification_count
+from notifications.config import my_handler
+from payments.models import Payments
+from .models import AddMemberForm, Member, SearchForm, UpdateMemberGymForm, UpdateMemberInfoForm
+
 
 def model_save(model):
     post_save.disconnect(my_handler, sender=Member)
@@ -87,6 +89,7 @@ def create_user(request, member):
 
 from django.contrib.auth.models import User
 
+
 def add_member(request):
     view_all = Member.objects.all()
     success = None
@@ -98,7 +101,8 @@ def add_member(request):
             temp = form.save(commit=False)
             temp.first_name = request.POST.get('first_name').capitalize()
             temp.last_name = request.POST.get('last_name').capitalize()
-            temp.registration_upto = parser.parse(request.POST.get('registration_date')) + delta.relativedelta(months=int(request.POST.get('subscription_period')))
+            temp.registration_upto = parser.parse(request.POST.get('registration_date')) + delta.relativedelta(
+                months=int(request.POST.get('subscription_period')))
             if request.POST.get('fee_status') == 'pending':
                 temp.notification = 1
             username = temp.email
@@ -134,9 +138,6 @@ def add_member(request):
         'subs_end_today_count': get_notification_count(),
     }
     return render(request, 'add_member.html', context)
-
-
-
 
 
 def view_member_detail(request):
@@ -234,7 +235,7 @@ def update_member(request, id):
                 object = check_status(request, object)
                 model_save(object)
             # if only subscription_period is Changed
-            elif (object.subscription_period != request.POST.get('subscription_period')):
+            elif object.subscription_period != request.POST.get('subscription_period'):
                 object.subscription_period = request.POST.get('subscription_period')
                 object = check_status(request, object)
                 model_save(object)
