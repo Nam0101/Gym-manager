@@ -12,6 +12,8 @@ https://docs.djangoproject.com/en/2.0/ref/settings/
 from django.apps import AppConfig
 import os
 
+from accounts.contex_processor import contex_processor
+
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
@@ -49,7 +51,8 @@ INSTALLED_APPS = [
     'payments',
     'equipment',
     'business',
-    'review'
+    'review',
+    'trainers'
 ]
 
 MIDDLEWARE = [
@@ -75,7 +78,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
-                'contex_processor.contex_processor'
+                'accounts.contex_processor.contex_processor',
             ],
         },
     },

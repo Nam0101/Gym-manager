@@ -4,11 +4,12 @@ import datetime
 from django.db.models import Q
 from django.db.models.signals import post_save
 
+
 def my_handler(sender, instance, created, **kwargs):
     query = Q(
-            Q(registration_upto__gte=datetime.datetime.today()),
-            Q(registration_upto__lte=datetime.datetime.today() + datetime.timedelta(days=1)),
-            Q(Q(notification=2) | Q(notification=0)))
+        Q(registration_upto__gte=datetime.datetime.today()),
+        Q(registration_upto__lte=datetime.datetime.today() + datetime.timedelta(days=1)),
+        Q(Q(notification=2) | Q(notification=0)))
 
     # last_5_days = datetime.date.today() - datetime.timedelta(days=5)
     members_before = Member.objects.filter(
@@ -24,13 +25,15 @@ def my_handler(sender, instance, created, **kwargs):
             member.save()
     return
 
+
 post_save.connect(my_handler, sender=Member)
+
 
 def run_notifier(**kwargs):
     query = Q(
-            Q(registration_upto__gte=datetime.datetime.today()),
-            Q(registration_upto__lte=datetime.datetime.today() + datetime.timedelta(days=1)),
-            Q(Q(notification=2) | Q(notification=0)))
+        Q(registration_upto__gte=datetime.datetime.today()),
+        Q(registration_upto__lte=datetime.datetime.today() + datetime.timedelta(days=1)),
+        Q(Q(notification=2) | Q(notification=0)))
 
     # last_5_days = datetime.date.today() - datetime.timedelta(days=5)
     members_before = Member.objects.filter(
@@ -47,6 +50,7 @@ def run_notifier(**kwargs):
             member.save()
             post_save.connect(my_handler, sender=Member)
     return
+
 
 def get_notification_count():
     NOTIF_COUNT = Member.objects.filter(

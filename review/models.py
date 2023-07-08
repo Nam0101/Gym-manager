@@ -1,10 +1,17 @@
 from django.db import models
 
+from members.models import Member
+
 
 # Create your models here.
-class review(models.Model):
+class Review(models.Model):
     review_id = models.AutoField(primary_key=True)
-    member_name = models.CharField('Member Name', max_length=50)
+    member = models.ForeignKey(Member, on_delete=models.CASCADE)
     review_content = models.CharField('Review Content', max_length=300)
     review_date = models.DateField(auto_now_add=True)
     review_star = models.IntegerField('Review Star')
+
+    def __str__(self):
+        return self.review_content
+
+

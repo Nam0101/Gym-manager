@@ -6,6 +6,7 @@ from django.db import models
 from django.contrib.auth.models import AbstractUser, User
 
 from Gymnasium import settings
+from trainers.models import Trainer
 
 SUBSCRIPTION_TYPE_CHOICES = (
     ('gym', 'Gym'),
@@ -85,6 +86,8 @@ class Member(models.Model):
     notification = models.IntegerField(default=2, blank=True)
     stop = models.IntegerField('Status', choices=STATUS, default=STATUS[0][0], blank=True)
     user = models.OneToOneField(User, on_delete=models.CASCADE, null=True, blank=True)
+    trainer = models.ForeignKey(Trainer, on_delete=models.SET_NULL, null=True, blank=True)
+
 
     def __str__(self):
         return self.first_name + ' ' + self.last_name

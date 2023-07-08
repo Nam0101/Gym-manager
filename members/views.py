@@ -10,7 +10,7 @@ from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.db.models.signals import post_save
 from django.http import HttpResponse
 from django.shortcuts import render, redirect
-
+from django.contrib.auth.models import User
 from notifications.config import get_notification_count
 from notifications.config import my_handler
 from payments.models import Payments
@@ -87,7 +87,6 @@ def create_user(request, member):
     model_save(member)
 
 
-from django.contrib.auth.models import User
 
 
 def add_member(request):

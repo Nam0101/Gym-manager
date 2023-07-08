@@ -22,7 +22,7 @@ def model_save(model):
 def view_equipment(request):
     search_form = SearchForm()
     view_all = Equipment.objects.all()
-    paginator = Paginator(view_all, 100)
+    paginator = Paginator(view_all, 10)
     try:
         page = request.GET.get('page', 1)
         view_all = paginator.page(page)

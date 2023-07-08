@@ -16,7 +16,7 @@ def homepage(request):
 
 
 def homepage_after_login(request):
-    # run_notifier()
+    run_notifier()
     if not Wallpaper.objects.filter()[:1].exists():
         return render(request, 'homepage_after_login.html')
     else:
