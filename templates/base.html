@@ -60,26 +60,31 @@
                 </div>
             </li>
 
-            <li class="nav-item  {% if request.resolver_match.url_name == 'view_member' %} active {% endif %}">
-                <a class="nav-link" href="{% url 'view_member' %}">Business statistics</a>
-            </li>
-            <li class="nav-item  {% if request.resolver_match.url_name == 'notifications' %} active {% endif %}">
-                <a class="nav-link" href="{% url 'notifications' %}">Notifications <span
-                        class="badge badge-success">{{ subs_end_today_count }}</span></a>
-        </ul>
-        {% endif %}
+                <li class="nav-item  {% if request.resolver_match.url_name == 'view_member' %} active {% endif %}">
+                    <a class="nav-link" href="{% url 'view_member' %}">Business statistics</a>
+                </li>
+                <li class="nav-item  {% if request.resolver_match.url_name == 'notifications' %} active {% endif %}">
+                    <a class="nav-link" href="{% url 'notifications' %}">Notifications <span
+                            class="badge badge-success">{{ subs_end_today_count }}</span></a>
+                </ul>
+            {% endif %}
 
         <ul class="navbar-nav ml-auto">
+            {% if permission_level == 'reviews' %}
+                <li class="nav-item {% if request.resolver_match.url_name == 'change_password' %} active {% endif %}">
+                    <a class="nav-link" href="{% url 'change_password' %}">Review</a>
+                </li>
+            {% endif %}
             <li class="nav-item {% if request.resolver_match.url_name == 'change_password' %} active {% endif %}">
                 <a class="nav-link" href="{% url 'change_password' %}">Change Password</a>
             </li>
-{#            check if is admin can not view infomation#}
+            {#            check if is admin can not view infomation#}
             {% if permission_level != 'all' %}
-            <li class="nav-item {% if request.resolver_match.url_name == 'change_password' %} active {% endif %}">
-                <a class="nav-link" href="{% url 'member_details' %}">View Your Information</a>
-            </li>
-            {#          <li class="nav-item  {% if request.resolver_match.url_name == 'set_wallpaper' %} active {% endif %}">#}
-            {#              <a class="nav-link" href="{% url 'set_wallpaper'%}">Wallpaper<span class="sr-only">(current)</span></a>#}
+                <li class="nav-item {% if request.resolver_match.url_name == 'change_password' %} active {% endif %}">
+                    <a class="nav-link" href="{% url 'member_details' %}">View Your Information</a>
+                </li>
+                {#          <li class="nav-item  {% if request.resolver_match.url_name == 'set_wallpaper' %} active {% endif %}">#}
+                {#              <a class="nav-link" href="{% url 'set_wallpaper'%}">Wallpaper<span class="sr-only">(current)</span></a>#}
             {#          </li>#}
                 {% endif %}
             <li class="nav-item">

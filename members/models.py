@@ -1,11 +1,8 @@
+from django import forms
+from django.contrib.auth.models import AbstractUser, User
 from django.db import models
 from django.forms import ModelForm
-from django import forms
-import datetime
-from django.db import models
-from django.contrib.auth.models import AbstractUser, User
 
-from Gymnasium import settings
 from trainers.models import Trainer
 
 SUBSCRIPTION_TYPE_CHOICES = (
@@ -86,8 +83,7 @@ class Member(models.Model):
     notification = models.IntegerField(default=2, blank=True)
     stop = models.IntegerField('Status', choices=STATUS, default=STATUS[0][0], blank=True)
     user = models.OneToOneField(User, on_delete=models.CASCADE, null=True, blank=True)
-    trainer = models.ForeignKey(Trainer, on_delete=models.SET_NULL, null=True, blank=True)
-
+    trainer = models.ForeignKey(Trainer, on_delete=models.SET_NULL, null=True, blank=True, default=None)
 
     def __str__(self):
         return self.first_name + ' ' + self.last_name
@@ -110,7 +106,6 @@ class AddMemberForm(ModelForm):
             'dob': forms.DateInput(attrs={'class': 'datepicker form-control', 'type': 'date'}),
             'photo': forms.FileInput(attrs={'accept': 'image/*;capture=camera'})
         }
-
 
     def clean_mobile_number(self, *args, **kwargs):
         mobile_number = self.cleaned_data.get('mobile_number')
