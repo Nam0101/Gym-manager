@@ -71,8 +71,8 @@
 
         <ul class="navbar-nav ml-auto">
             {% if permission_level == 'reviews' %}
-                <li class="nav-item {% if request.resolver_match.url_name == 'change_password' %} active {% endif %}">
-                    <a class="nav-link" href="{% url 'change_password' %}">Review</a>
+                <li class="nav-item {% if request.resolver_match.url_name == 'add_review' %} active {% endif %}">
+                    <a class="nav-link" href="{% url 'add_review' %}">Review</a>
                 </li>
             {% endif %}
             <li class="nav-item {% if request.resolver_match.url_name == 'change_password' %} active {% endif %}">
