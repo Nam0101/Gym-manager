@@ -11,26 +11,50 @@ from .config import my_handler
 
 # Create your views here.
 def notifications(request):
-    # run_notifier()
-    morning_members_before = Member.objects.filter(
-        Q(registration_upto__lte=datetime.datetime.now(),
-          notification=1, batch='morning') |
-        Q(fee_status='pending', notification=1, batch='morning')
-    ).exclude(stop=1).order_by('first_name')
-    morning_members_today = Member.objects.filter(
-        registration_upto__gte=datetime.datetime.now(),
-        registration_upto__lte=datetime.date.today() + datetime.timedelta(days=2),
-        notification=1, batch='morning').exclude(stop=1).order_by('first_name')
+    if request.user.is_superuser:
+        # If user is superuser, show all notifications
+        morning_members_before = Member.objects.filter(
+            Q(registration_upto__lte=datetime.datetime.now(), notification=1, batch='morning') |
+            Q(fee_status='pending', notification=1, batch='morning')
+        ).exclude(stop=1).order_by('first_name')
+        morning_members_today = Member.objects.filter(
+            registration_upto__gte=datetime.datetime.now(),
+            registration_upto__lte=datetime.date.today() + datetime.timedelta(days=2),
+            notification=1, batch='morning'
+        ).exclude(stop=1).order_by('first_name')
 
-    evening_members_before = Member.objects.filter(
-        Q(registration_upto__lte=datetime.datetime.now(),
-          notification=1, batch='evening') |
-        Q(fee_status='pending', notification=1, batch='evening')
-    ).exclude(stop=1).order_by('first_name')
-    evening_members_today = Member.objects.filter(
-        registration_upto__gte=datetime.datetime.now(),
-        registration_upto__lte=datetime.date.today() + datetime.timedelta(days=2),
-        notification=1, batch='evening').exclude(stop=1).order_by('first_name')
+        evening_members_before = Member.objects.filter(
+            Q(registration_upto__lte=datetime.datetime.now(), notification=1, batch='evening') |
+            Q(fee_status='pending', notification=1, batch='evening')
+        ).exclude(stop=1).order_by('first_name')
+        evening_members_today = Member.objects.filter(
+            registration_upto__gte=datetime.datetime.now(),
+            registration_upto__lte=datetime.date.today() + datetime.timedelta(days=2),
+            notification=1, batch='evening'
+        ).exclude(stop=1).order_by('first_name')
+    elif hasattr(request.user, 'manager'):
+        # If user is a manager, show notifications only for members in their room
+        morning_members_before = Member.objects.filter(
+            Q(registration_upto__lte=datetime.datetime.now(),
+              notification=1, batch='morning', room=request.user.manager.room) |
+            Q(fee_status='pending', notification=1, batch='morning', room=request.user.manager.room)
+        ).exclude(stop=1).order_by('first_name')
+        morning_members_today = Member.objects.filter(
+            registration_upto__gte=datetime.datetime.now(),
+            registration_upto__lte=datetime.date.today() + datetime.timedelta(days=2),
+            notification=1, batch='morning', room=request.user.manager.room
+        ).exclude(stop=1).order_by('first_name')
+
+        evening_members_before = Member.objects.filter(
+            Q(registration_upto__lte=datetime.datetime.now(),
+              notification=1, batch='evening', room=request.user.manager.room) |
+            Q(fee_status='pending', notification=1, batch='evening', room=request.user.manager.room)
+        ).exclude(stop=1).order_by('first_name')
+        evening_members_today = Member.objects.filter(
+            registration_upto__gte=datetime.datetime.now(),
+            registration_upto__lte=datetime.date.today() + datetime.timedelta(days=2),
+            notification=1, batch='evening', room=request.user.manager.room
+        ).exclude(stop=1).order_by('first_name')
 
     context = {
         'subs_end_today_count': get_notification_count(),
@@ -39,8 +63,8 @@ def notifications(request):
         'evening_members_today': evening_members_today,
         'evening_members_before': evening_members_before,
     }
-    # Entry.objects.filter(pub_date__date__gt=datetime.date(2005, 1, 1))
     return render(request, 'notifications.html', context)
+
 
 
 def notification_delete(request, id):

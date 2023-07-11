@@ -13,7 +13,7 @@ STATUS_CHOICES = [
 DEFAULT_ROOM_ID = 1
 
 
-class room(models.Model):
+class Room(models.Model):
     room_id = models.AutoField(primary_key=True)
     room_name = models.CharField(max_length=50)
     room_location = models.CharField(max_length=50)
@@ -30,7 +30,7 @@ class Equipment(models.Model):
     equipment_warranty_date = models.DateField('Warranty Date')
     equipment_origin = models.CharField('Origin', max_length=50)
     equipment_status = models.CharField('Status', max_length=50, choices=STATUS_CHOICES)
-    room = models.ForeignKey('room', on_delete=models.CASCADE, default=DEFAULT_ROOM_ID)
+    room = models.ForeignKey('Room', on_delete=models.CASCADE, default=DEFAULT_ROOM_ID)
 
     class Meta:
         ordering = ['equipment_name']

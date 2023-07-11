@@ -16,21 +16,11 @@ def homepage(request):
 
 
 def homepage_after_login(request):
-    run_notifier()
     if not Wallpaper.objects.filter()[:1].exists():
         return render(request, 'homepage_after_login.html')
     else:
         wallpaper = Wallpaper.objects.filter()[:1].get()
-        # Check if user is in MEMBER group
-        member_group = Group.objects.get(name='MEMBER')
-        if member_group in request.user.groups.all():
-            # User is in MEMBER group
-            context = {'wallpaper': wallpaper, 'subs_end_today_count': get_notification_count(),
-                       'permission_level': 'reviews'}
-        else:
-            # User is not in MEMBER group
-            context = {'wallpaper': wallpaper, 'subs_end_today_count': get_notification_count(),
-                       'permission_level': 'all'}
+        context = {'wallpaper': wallpaper, 'subs_end_today_count': get_notification_count()}
         return render(request, 'homepage_after_login.html', context)
 
 

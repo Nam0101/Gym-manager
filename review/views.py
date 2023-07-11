@@ -1,7 +1,7 @@
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect
 
-from members.models import Member
+from members.models import Member, Manager
 from review.forms import addReviewForm
 from review.models import Review
 
@@ -19,8 +19,13 @@ def add_review(request):
     return render(request, "add_review.html", context)
 
 
-def view_reviews(request,):
-    reviews = Review.objects.all()
+def view_reviews(request):
+    current_user = request.user
+    if current_user.is_superuser:
+        reviews = Review.objects.all()
+    else:
+        manager = Manager.objects.get(user=current_user)
+        reviews = Review.objects.filter(member__room__manager=manager)
     context = {'reviews': reviews}
     return render(request, 'view_review.html', context)
 

@@ -5,16 +5,19 @@ import dateutil.parser as parser
 import dateutil.relativedelta as delta
 from django.contrib import messages
 from django.contrib.auth.models import Group
+from django.contrib.auth.models import User
 from django.core.files.storage import FileSystemStorage
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.db.models.signals import post_save
 from django.http import HttpResponse
 from django.shortcuts import render, redirect
-from django.contrib.auth.models import User
+
+from equipment.models import Room
 from notifications.config import get_notification_count
 from notifications.config import my_handler
 from payments.models import Payments
-from .models import AddMemberForm, Member, SearchForm, UpdateMemberGymForm, UpdateMemberInfoForm
+from .models import AddMemberForm, Member, SearchForm, UpdateMemberGymForm, UpdateMemberInfoForm, Manager, \
+    AddManagerForm
 
 
 def model_save(model):
@@ -54,7 +57,20 @@ def members(request):
 
 
 def view_member(request):
-    view_all = Member.objects.filter(stop=0).order_by('first_name')
+    current_user = request.user
+    if current_user.is_superuser:
+        print("Superuser")
+        view_all = Member.objects.all()
+        evening = Member.objects.filter(batch='evening', stop=0).order_by('first_name')
+        morning = Member.objects.filter(batch='morning', stop=0).order_by('first_name')
+        stopped = Member.objects.filter(stop=1).order_by('first_name')
+    else:
+        current_manager = Manager.objects.get(user=current_user)
+        current_room = current_manager.room
+        view_all = Member.objects.filter(room=current_room)
+        evening = Member.objects.filter(batch='evening', stop=0, room=current_room).order_by('first_name')
+        morning = Member.objects.filter(batch='morning', stop=0, room=current_room).order_by('first_name')
+        stopped = Member.objects.filter(stop=1, room=current_room).order_by('first_name')
     paginator = Paginator(view_all, 100)
     try:
         page = request.GET.get('page', 1)
@@ -64,10 +80,6 @@ def view_member(request):
     except EmptyPage:
         view_all = paginator.page(paginator.num_pages)
     search_form = SearchForm()
-    # get all members according to their batches
-    evening = Member.objects.filter(batch='evening', stop=0).order_by('first_name')
-    morning = Member.objects.filter(batch='morning', stop=0).order_by('first_name')
-    stopped = Member.objects.filter(stop=1).order_by('first_name')
     context = {
         'all': view_all,
         'morning': morning,
@@ -86,11 +98,11 @@ def create_user(request, member):
     member.user = user
     model_save(member)
 
+
 def add_member(request):
     view_all = Member.objects.all()
     success = None
     member = None
-
     if request.method == 'POST':
         form = AddMemberForm(request.POST, request.FILES)
         if form.is_valid():
@@ -104,6 +116,9 @@ def add_member(request):
             username = temp.email
             password = temp.mobile_number
             user = User.objects.create_user(username=username, password=password)
+            current_user = request.user
+            current_room = Manager.objects.get(user=current_user).room
+            temp.room = current_room
             temp.user = user
             temp.save()
             group = Group.objects.get(name='MEMBER')
@@ -254,7 +269,7 @@ def update_member(request, id):
                 object = check_status(request, object)
                 model_save(object)
             # if only amount is channged
-            elif (object.amount != amount):
+            elif object.amount != amount:
                 object.registration_date = parser.parse(request.POST.get('registration_upto'))
                 object.registration_upto = parser.parse(request.POST.get('registration_upto')) + delta.relativedelta(
                     months=int(request.POST.get('subscription_period')))
@@ -419,3 +434,53 @@ def update_member(request, id):
                           'subs_end_today_count': get_notification_count(),
                       }
                       )
+
+
+
+def add_manager(request):
+    success = None
+    rooms = Room.objects.all()
+
+    if request.method == 'POST':
+        form = AddManagerForm(request.POST, request.FILES)
+        if form.is_valid():
+            manager = form.save(commit=False)
+            manager.manager_name = request.POST.get('manager_name').capitalize()
+            manager.manager_email = request.POST.get('manager_email')
+            manager.manager_phone = request.POST.get('manager_phone')
+            manager.manager_address = request.POST.get('manager_address')
+            manager.dob = parser.parse(request.POST.get('dob'))
+            manager.photo = request.FILES.get('photo')
+
+            room_id = request.POST.get('room')
+            room = Room.objects.get(pk=room_id)
+            manager.room = room
+
+            manager.save()
+
+            # Create a user account for the manager
+            username = manager.manager_email
+            password = manager.manager_phone
+            user = User.objects.create_user(username=username, password=password)
+            manager.user = user
+            manager.save()
+
+            group = Group.objects.get(name='MANAGER')
+            user.groups.add(group)
+
+            success = 'Successfully Added Manager'
+
+            form = AddManagerForm()
+        else:
+            print(form.errors)
+    else:
+        form = AddManagerForm()
+
+    context = {
+        'add_success': success,
+        'form': form,
+        'rooms': rooms,
+        'subs_end_today_count': get_notification_count(),
+    }
+    return render(request, 'add_manager.html', context)
+

@@ -26,4 +26,5 @@ urlpatterns = [
     path('update/<int:id>/', login_required(views.update_member), name='update_member'),
     path('', login_required(views.members), name='members'),
     path('details/', login_required(views.view_member_detail), name='member_details'),
+    path('add_manager/', login_required(views.add_manager), name='add_manager'),
 ]

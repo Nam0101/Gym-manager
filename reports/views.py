@@ -11,6 +11,8 @@ REPORT_CHOICES = (
     ('member', 'Member'),
     ('equipment', 'Equipment'),
 )
+
+
 # Create your views here.
 def export_all(user_obj):
     response = HttpResponse(content_type='text/csv')
@@ -28,7 +30,6 @@ def export_all(user_obj):
 def reports(request):
     context = {}
     if request.method == 'POST':
-
         form = GenerateReportForm(request.POST)
         if form.is_valid():
             if request.POST.get('month') and request.POST.get('year') and request.POST.get('batch'):
@@ -56,20 +57,21 @@ def reports(request):
                 query = Q(
                     registration_date__year=request.POST.get('year'),
                 )
-            users = Member.objects.filter(query)
-            # aggregate_amount = 0
-            # for member in users:
-            #     aggregate_amount += member.amount
-            if 'export' in request.POST:
-                return export_all(users)
-            context = {
-                'users': users,
-                'form': form,
-                # 'aggregate_amount': aggregate_amount,
-                # 'students_registered': len(reg_users),
-                'subs_end_today_count': get_notification_count(),
-            }
-            return render(request, 'reports.html', context)
+            users = None
+            if request.user.is_superuser:
+                users = Member.objects.filter(query)
+            else:
+                users = Member.objects.filter(query, room=request.user.manager.room)
+            if users is not None:
+                if 'export' in request.POST:
+                    return export_all(users)
+                context = {
+                    'users': users,
+                    'form': form,
+                    'subs_end_today_count': get_notification_count(),
+                }
+                return render(request, 'reports.html', context)
     else:
         form = GenerateReportForm()
-    return render(request, 'reports.html', {'form': form, 'subs_end_today_count': get_notification_count(), })
+    return render(request, 'reports.html', {'form': form, 'subs_end_today_count': get_notification_count()})
+

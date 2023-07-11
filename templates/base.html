@@ -28,14 +28,16 @@
     {% if request.user.username %}
         <div class="collapse navbar-collapse" id="navbarNav">
         <ul class="navbar-nav mr-auto">
-            {% if permission_level == 'all' %}
+            {% if permission_level != 'reviews' %}
             <li class="nav-item dropdown">
                 <a class="nav-link dropdown-toggle" href="{% url 'members' %}" id="navbarDropdown" role="button" data-toggle="dropdown"
                    aria-haspopup="true" aria-expanded="false">
                     Members
                 </a>
                 <div class="dropdown-menu bg-light" aria-labelledby="navbarDropdown">
-                    <a class="dropdown-item text-primary my-1 py-2" href="{% url 'members' %}">New Member</a>
+                    {% if permission_level == 'manager' %}
+                        <a class="dropdown-item text-primary my-1 py-2" href="{% url 'members' %}">New Member</a>
+                    {% endif %}
                     <a class="dropdown-item text-primary my-1 py-2" href="{% url 'view_member' %}">View All Members</a>
                 </div>
             </li>
@@ -48,7 +50,10 @@
             {#            </li>#}
             <li class="nav-item {% if request.resolver_match.url_name == 'reports' %} active {% endif %}">
                 <a class="nav-link" href="{% url 'reports' %}">Reports</a>
-
+            {% if permission_level == 'all' %}
+                <li class="nav-item {% if request.resolver_match.url_name == 'add_manager' %} active {% endif %}">
+                <a class="nav-link" href="{% url 'add_manager' %}">Manager</a>
+            {% endif %}
             <li class="nav-item dropdown">
                 <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown"
                    aria-haspopup="true" aria-expanded="false">
@@ -79,7 +84,7 @@
                     <a class="dropdown-item text-primary my-1 py-2" href="{% url 'my_reviews' %}">View Your Review</a>
                 </div>
             {% endif %}
-            {% if permission_level == 'all' %}
+            {% if permission_level == 'all' or  permission_level == 'manager'  %}
                 <li class="nav-item {% if request.resolver_match.url_name == 'my_reviews' %} active {% endif %}">
                     <a class="nav-link" href="{% url 'view_review' %}">View All Review</a>
                 </li>
@@ -88,7 +93,7 @@
                 <a class="nav-link" href="{% url 'change_password' %}">Change Password</a>
             </li>
             {#            check if is admin can not view infomation#}
-            {% if permission_level != 'all' %}
+            {% if permission_level == 'reviews' %}
                 <li class="nav-item {% if request.resolver_match.url_name == 'change_password' %} active {% endif %}">
                     <a class="nav-link" href="{% url 'member_details' %}">View Your Information</a>
                 </li>

@@ -2,7 +2,7 @@ from django import forms
 from django.contrib.auth.models import AbstractUser, User
 from django.db import models
 from django.forms import ModelForm
-from equipment.models import room
+from equipment.models import Room
 from equipment.models import DEFAULT_ROOM_ID
 from trainers.models import Trainer
 
@@ -54,7 +54,7 @@ class Manager(models.Model):
     start_work = models.DateField(auto_now_add=True)
     photo = models.FileField(upload_to='photos/', blank=True)
     user = models.OneToOneField(User, on_delete=models.CASCADE, null=True, blank=True)
-    room = models.ForeignKey('equipment.room', on_delete=models.CASCADE, default=DEFAULT_ROOM_ID)
+    room = models.ForeignKey('equipment.Room', on_delete=models.CASCADE, default=DEFAULT_ROOM_ID)
 
     def __str__(self):
         return self.manager_name
@@ -101,7 +101,7 @@ class Member(models.Model):
     stop = models.IntegerField('Status', choices=STATUS, default=STATUS[0][0], blank=True)
     user = models.OneToOneField(User, on_delete=models.CASCADE, null=True, blank=True)
     trainer = models.ForeignKey(Trainer, on_delete=models.SET_NULL, null=True, blank=True, default=None)
-    room = models.ForeignKey('equipment.room', on_delete=models.CASCADE, blank=True, default=DEFAULT_ROOM_ID)
+    room = models.ForeignKey('equipment.Room', on_delete=models.CASCADE, blank=True, default=DEFAULT_ROOM_ID)
 
     def __str__(self):
         return self.first_name + ' ' + self.last_name
@@ -191,3 +191,19 @@ class UpdateMemberInfoForm(forms.Form):
     last_name = forms.CharField(max_length=50)
     photo = forms.FileField(label='Update Photo', required=False)
     dob = forms.DateField(widget=forms.DateInput(attrs={'class': 'datepicker        form-control', 'type': 'date'}), )
+
+
+class AddManagerForm(forms.ModelForm):
+    class Meta:
+        model = Manager
+        fields = ['manager_name', 'manager_email', 'manager_phone', 'manager_address', 'dob', 'photo']
+        widgets = {
+            'dob': forms.DateInput(attrs={'class': 'datepicker form-control', 'type': 'date'}),
+            'photo': forms.FileInput(attrs={'accept': 'image/*;capture=camera'})
+        }
+
+    def clean_manager_email(self):
+        manager_email = self.cleaned_data.get('manager_email')
+        if Manager.objects.filter(manager_email=manager_email).exists():
+            raise forms.ValidationError('This manager email has already been registered.')
+        return manager_email

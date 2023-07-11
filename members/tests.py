@@ -1,6 +1,7 @@
 from django.test import TestCase
 from .models import Member
 import datetime
+from django.core.management import execute_from_command_line
 
 # Create your tests here.
 class MemberTestCase(TestCase):
