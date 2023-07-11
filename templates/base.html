@@ -68,11 +68,20 @@
                             class="badge badge-success">{{ subs_end_today_count }}</span></a>
                 </ul>
             {% endif %}
-
         <ul class="navbar-nav ml-auto">
             {% if permission_level == 'reviews' %}
-                <li class="nav-item {% if request.resolver_match.url_name == 'add_review' %} active {% endif %}">
-                    <a class="nav-link" href="{% url 'add_review' %}">Review</a>
+                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown"
+                   aria-haspopup="true" aria-expanded="false">
+                    Review
+                </a>
+                <div class="dropdown-menu bg-light" aria-labelledby="navbarDropdown">
+                    <a class="dropdown-item text-primary my-1 py-2" href="{% url 'add_review' %}">Add Review</a>
+                    <a class="dropdown-item text-primary my-1 py-2" href="{% url 'my_reviews' %}">View Your Review</a>
+                </div>
+            {% endif %}
+            {% if permission_level == 'all' %}
+                <li class="nav-item {% if request.resolver_match.url_name == 'my_reviews' %} active {% endif %}">
+                    <a class="nav-link" href="{% url 'view_review' %}">View All Review</a>
                 </li>
             {% endif %}
             <li class="nav-item {% if request.resolver_match.url_name == 'change_password' %} active {% endif %}">

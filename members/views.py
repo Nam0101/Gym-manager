@@ -86,9 +86,6 @@ def create_user(request, member):
     member.user = user
     model_save(member)
 
-
-
-
 def add_member(request):
     view_all = Member.objects.all()
     success = None

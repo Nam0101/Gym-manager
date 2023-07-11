@@ -4,14 +4,15 @@
     {{ block.super }}
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
 {% endblock %}
+
 {% block content %}
-    <h1>All Reviews</h1>
     <div class="container">
+        <h1 class="my-3">My Reviews</h1>
         <ul class="list-group">
             {% for review in reviews %}
                 <li class="list-group-item">
-                    <h5><a href="/members/update/{{ review.member.member_id }}">{{ review.member.first_name }} {{ review.member.last_name }}</a></h5>
-                    <p>{{ review.review_date }}: {{ review.review_content }}</p>
+                    <h5>{{ review.review_date }}</h5>
+                    <p>{{ review.review_content }}</p>
                     <p>Rating: {{ review.review_star }} stars</p>
                 </li>
             {% endfor %}

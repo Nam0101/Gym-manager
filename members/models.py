@@ -2,7 +2,8 @@ from django import forms
 from django.contrib.auth.models import AbstractUser, User
 from django.db import models
 from django.forms import ModelForm
-
+from equipment.models import room
+from equipment.models import DEFAULT_ROOM_ID
 from trainers.models import Trainer
 
 SUBSCRIPTION_TYPE_CHOICES = (
@@ -41,6 +42,22 @@ BATCH = (
     ('morning', 'Morning'),
     ('evening', 'Evening'),
 )
+
+
+class Manager(models.Model):
+    manager_id = models.AutoField(primary_key=True)
+    manager_name = models.CharField('Manager Name', max_length=100)
+    manager_email = models.CharField('Manager Email', max_length=100)
+    manager_phone = models.CharField('Manager Phone', max_length=100)
+    manager_address = models.CharField('Manager Address', max_length=100)
+    dob = models.DateField(default='dd/mm/yyyy')
+    start_work = models.DateField(auto_now_add=True)
+    photo = models.FileField(upload_to='photos/', blank=True)
+    user = models.OneToOneField(User, on_delete=models.CASCADE, null=True, blank=True)
+    room = models.ForeignKey('equipment.room', on_delete=models.CASCADE, default=DEFAULT_ROOM_ID)
+
+    def __str__(self):
+        return self.manager_name
 
 
 class Member(models.Model):
@@ -84,6 +101,7 @@ class Member(models.Model):
     stop = models.IntegerField('Status', choices=STATUS, default=STATUS[0][0], blank=True)
     user = models.OneToOneField(User, on_delete=models.CASCADE, null=True, blank=True)
     trainer = models.ForeignKey(Trainer, on_delete=models.SET_NULL, null=True, blank=True, default=None)
+    room = models.ForeignKey('equipment.room', on_delete=models.CASCADE, blank=True, default=DEFAULT_ROOM_ID)
 
     def __str__(self):
         return self.first_name + ' ' + self.last_name
