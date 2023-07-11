@@ -10,16 +10,27 @@ STATUS_CHOICES = [
     ('out of order', 'Out of Order'),
 ]
 
+DEFAULT_ROOM_ID = 1
+
+
+class room(models.Model):
+    room_id = models.AutoField(primary_key=True)
+    room_name = models.CharField(max_length=50)
+    room_location = models.CharField(max_length=50)
+
+    def __str__(self):
+        return self.room_name
+
 
 # Create your models here.
 class Equipment(models.Model):
     equipment_name = models.CharField('Name', max_length=50)
     equipment_code = models.CharField('Code', max_length=50, unique=True)
-    equipment_quantity = models.IntegerField('Quantity')
     equipment_import_date = models.DateField('Import Date')
     equipment_warranty_date = models.DateField('Warranty Date')
     equipment_origin = models.CharField('Origin', max_length=50)
     equipment_status = models.CharField('Status', max_length=50, choices=STATUS_CHOICES)
+    room = models.ForeignKey('room', on_delete=models.CASCADE, default=DEFAULT_ROOM_ID)
 
     class Meta:
         ordering = ['equipment_name']
@@ -31,7 +42,7 @@ class AddEquipmentForm(ModelForm):
         self.fields['equipment_name'].error_messages = {'required': 'Please enter equipment name'}
         self.fields['equipment_code'].error_messages = {'required': 'Please enter equipment code'}
         self.fields['equipment_quantity'].error_messages = {'required': 'Please enter equipment quantity'}
-        self.fields['equipment_import_date'].error_messages = {'required': 'Please enter equipment import date'}
+        self.fields['room'].error_messages = {'required': 'Please enter room id'}
         self.fields['equipment_warranty_date'].error_messages = {'required': 'Please enter equipment warranty date'}
         self.fields['equipment_origin'].error_messages = {'required': 'Please enter equipment origin'}
 
@@ -48,7 +59,7 @@ class AddEquipmentForm(ModelForm):
 class UpdateEquipmentForm(forms.Form):
     equipment_name = forms.CharField(label='Name', max_length=50)
     equipment_code = forms.CharField(label='Code', max_length=50)
-    equipment_quantity = forms.IntegerField(label='Quantity')
+    room = forms.CharField(label='Room', max_length=50)
     equipment_import_date = forms.DateField(
         widget=forms.DateInput(attrs={'class': 'datepicker form-control', 'type': 'date'}), label='Import Date')
     equipment_warranty_date = forms.DateField(

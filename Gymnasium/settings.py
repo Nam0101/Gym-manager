@@ -52,8 +52,7 @@ INSTALLED_APPS = [
     'equipment',
     'business',
     'review',
-    'trainers',
-    'gym_room',
+    'trainers'
 ]
 
 MIDDLEWARE = [
