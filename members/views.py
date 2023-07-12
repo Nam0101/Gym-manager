@@ -56,10 +56,32 @@ def members(request):
     return render(request, 'add_member.html', context)
 
 
+def view_manager(request):
+    current_user = request.user
+    if current_user.is_superuser:
+        view_all = Manager.objects.all()
+    else:
+        view_all = Manager.objects.filter(user=current_user)
+    paginator = Paginator(view_all, 100)
+    try:
+        page = request.GET.get('page', 1)
+        view_all = paginator.page(page)
+    except PageNotAnInteger:
+        view_all = paginator.page(1)
+    except EmptyPage:
+        view_all = paginator.page(paginator.num_pages)
+    search_form = SearchForm()
+    context = {
+        'all': view_all,
+        'search_form': search_form,
+        'subs_end_today_count': get_notification_count(),
+    }
+    return render(request, 'view_manager.html', context)
+
+
 def view_member(request):
     current_user = request.user
     if current_user.is_superuser:
-        print("Superuser")
         view_all = Member.objects.all()
         evening = Member.objects.filter(batch='evening', stop=0).order_by('first_name')
         morning = Member.objects.filter(batch='morning', stop=0).order_by('first_name')
@@ -221,7 +243,7 @@ def update_member(request, id):
                 messages.error(request, 'Please start the status of user to update the record')
                 return redirect('update_member', id=object.pk)
             # to change only the batch
-            elif (object.batch != request.POST.get('batch')):
+            elif object.batch != request.POST.get('batch'):
                 object.batch = request.POST.get('batch')
                 object = check_status(request, object)
                 model_save(object)
@@ -436,7 +458,6 @@ def update_member(request, id):
                       )
 
 
-
 def add_manager(request):
     success = None
     rooms = Room.objects.all()
@@ -483,4 +504,3 @@ def add_manager(request):
         'subs_end_today_count': get_notification_count(),
     }
     return render(request, 'add_manager.html', context)
-

@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+{% load tags %}
+{% load static %}
+
+{% block title %}
+    Managers
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row">
+        <div class="col-md-12">
+            <h1>Managers</h1>
+            <hr>
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Room</th>
+                        <th>Start Work</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for manager in all %}
+                        <tr>
+                            <td>{{ manager.manager_name }}</td>
+                            <td>{{ manager.room }}</td>
+                            <td>{{ manager.start_work }}</td>
+                            <td>
+                                <a href="#" class="btn btn-primary btn-sm">Edit</a>
+                                <a href="#" class="btn btn-danger btn-sm">Delete</a>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

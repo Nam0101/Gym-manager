@@ -27,4 +27,5 @@ urlpatterns = [
     path('', login_required(views.members), name='members'),
     path('details/', login_required(views.view_member_detail), name='member_details'),
     path('add_manager/', login_required(views.add_manager), name='add_manager'),
+    path('view_manager/', login_required(views.view_manager), name='view_manager'),
 ]

@@ -23,7 +23,7 @@
                             <div class="container text-center">
                                 <div class="alert alert-dark" style="margin-bottom: 0">
                                     <p style="margin-bottom: 0">{{ add_success }}</p>
-                                    <form method="POST" action="{% url 'add_manager' %}">
+                                    <form method="POST" action="{% url 'homepage_after_login' %}">
                                         {% csrf_token %}
                                         <div>Want to print user data?</div>
                                         <input type="submit" class="btn btn-success btn-sm" name="export" value="Yes"/>
