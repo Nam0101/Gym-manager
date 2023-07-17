@@ -10,14 +10,14 @@ from django.core.files.storage import FileSystemStorage
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.db.models.signals import post_save
 from django.http import HttpResponse
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 
 from equipment.models import Room
 from notifications.config import get_notification_count
 from notifications.config import my_handler
 from payments.models import Payments
-from .models import AddMemberForm, Member, SearchForm, UpdateMemberGymForm, UpdateMemberInfoForm, Manager, \
-    AddManagerForm
+from .models import Member, Manager, Training_history
+from .forms import AddMemberForm, SearchForm, AddManagerForm, UpdateMemberGymForm, UpdateMemberInfoForm
 
 
 def model_save(model):
@@ -181,14 +181,18 @@ def view_member_detail(request):
     return render(request, 'view_member_detail.html', context)
 
 
+def view_training_history(request):
+    member = Member.objects.get(user=request.user)
+    training_history = Training_history.objects.filter(member=member)
+    context = {
+        'member': member,
+        'training_history': training_history,
+    }
+    return render(request, 'view_training_history.html', context)
+
+
 def search_member(request):
     if request.method == 'POST':
-        # search_form = SearchForm(request.POST)
-        # first_name = request.POST.get('search')
-        # check = Member.objects.filter(first_name__contains=first_name)
-        # check = serializers.serialize('json', check)
-        # context = {}
-        # context['search'] = check
         if 'clear' in request.POST:
             return redirect('view_member')
         search_form = SearchForm(request.POST)

@@ -36,6 +36,7 @@ class GenerateReports(models.Model):
 
 class GenerateReportForm(ModelForm):
     report_type = forms.ChoiceField(label='Report Type', choices=REPORT_CHOICES)
+
     class Meta:
         model = GenerateReports
         fields = '__all__'

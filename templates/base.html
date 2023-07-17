@@ -88,14 +88,17 @@
                         <a class="nav-link" href="{% url 'view_review' %}">View All Review</a>
                     </li>
                 {% endif %}
-                <li class="nav-item">
-                    <a class="nav-link" href="{% url 'change_password' %}">Change Password</a>
-                </li>
                 {% if permission_level == 'reviews' %}
                     <li class="nav-item">
                         <a class="nav-link" href="{% url 'member_details' %}">View Your Information</a>
                     </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'training_history' %}">View Your Training History</a>
+                    </li>
                 {% endif %}
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'change_password' %}">Change Password</a>
+                </li>
                 <li class="nav-item">
                     <a class="nav-link" href="{% url 'logout' %}">Logout</a>
                 </li>
