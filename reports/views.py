@@ -3,6 +3,8 @@ from django.http import HttpResponse
 from members.models import Member
 import csv
 import datetime
+
+from payments.models import Payments
 from .models import GenerateReportForm
 from django.db.models import Q
 from notifications.config import get_notification_count
@@ -27,59 +29,67 @@ def export_all(user_obj):
     return response
 
 
-def report_revenue(request):
-    context = {}
-    if request.method == 'POST':
-        form = GenerateReportForm(request.POST)
-        if form.is_valid():
-            if request.POST.get('month') and request.POST.get('year') and request.POST.get('batch'):
-                query = Q(
-                    registration_date__month=request.POST.get('month'),
-                    registration_date__year=request.POST.get('year'),
-                    batch=request.POST.get('batch')
-                )
-            elif request.POST.get('month') and request.POST.get('year'):
-                query = Q(
-                    registration_date__month=request.POST.get('month'),
-                    registration_date__year=request.POST.get('year')
-                )
-            elif request.POST.get('month') and request.POST.get('batch'):
-                query = Q(
-                    registration_date__month=request.POST.get('month'),
-                    batch=request.POST.get('batch')
-                )
-            elif request.POST.get('year') and request.POST.get('batch'):
-                query = Q(
-                    registration_date__year=request.POST.get('year'),
-                    batch=request.POST.get('batch')
-                )
-            elif request.POST.get('month'):
-                query = Q(
-                    registration_date__month=request.POST.get('month')
-                )
-            elif request.POST.get('year'):
-                query = Q(
-                    registration_date__year=request.POST.get('year')
-                )
-            elif request.POST.get('batch'):
-                query = Q(
-                    batch=request.POST.get('batch')
-                )
-            else:
-                query = Q()
-            members = Member.objects.filter(query)
-            payment_amount = 0
-            for member in members:
-                payment_amount += member.payment_amount
-            context['members'] = members
-            context['form'] = form
-            context['total_revenue'] = payment_amount
-            context['total_members'] = len(members)
-            return render(request, 'revenue.html', context)
-    else:
-        form = GenerateReportForm()
-        context['form'] = form
-        return render(request, 'revenue.html', context)
+# def report_revenue(request):
+#     context = {}
+#     if request.method == 'POST':
+#         form = GenerateReportForm(request.POST)
+#         if form.is_valid():
+#             if request.POST.get('month') and request.POST.get('year') and request.POST.get('batch'):
+#                 query = Q(
+#                     registration_date__month=request.POST.get('month'),
+#                     registration_date__year=request.POST.get('year'),
+#                     batch=request.POST.get('batch')
+#                 )
+#             elif request.POST.get('month') and request.POST.get('year'):
+#                 query = Q(
+#                     registration_date__month=request.POST.get('month'),
+#                     registration_date__year=request.POST.get('year')
+#                 )
+#             elif request.POST.get('month') and request.POST.get('batch'):
+#                 query = Q(
+#                     registration_date__month=request.POST.get('month'),
+#                     batch=request.POST.get('batch')
+#                 )
+#             elif request.POST.get('year') and request.POST.get('batch'):
+#                 query = Q(
+#                     registration_date__year=request.POST.get('year'),
+#                     batch=request.POST.get('batch')
+#                 )
+#             elif request.POST.get('month'):
+#                 query = Q(
+#                     registration_date__month=request.POST.get('month')
+#                 )
+#             elif request.POST.get('year'):
+#                 query = Q(
+#                     registration_date__year=request.POST.get('year')
+#                 )
+#             elif request.POST.get('batch'):
+#                 query = Q(
+#                     batch=request.POST.get('batch')
+#                 )
+#             else:
+#                 query = Q()
+#             members = Member.objects.filter(query)
+#             payment_amount = 0
+#             for member in members:
+#                 payment_amount += member.payment_amount
+#             context['members'] = members
+#             context['form'] = form
+#             context['total_revenue'] = payment_amount
+#             context['total_members'] = len(members)
+#             return render(request, 'revenue.html', context)
+#     else:
+#         form = GenerateReportForm()
+#         context['form'] = form
+#         return render(request, 'revenue.html', context)
+
+def convert_to_vnd_string(amount):
+    amount = str(amount)
+    amount = amount[::-1]
+    amount = '.'.join([amount[i:i+3] for i in range(0, len(amount), 3)])
+    amount = amount[::-1]
+    amount = amount + ' VND'
+    return amount
 
 def reports(request):
     context = {}
@@ -126,9 +136,64 @@ def reports(request):
                         'subs_end_today_count': get_notification_count(),
                     }
                     return render(request, 'reports.html', context)
-            elif form.cleaned_data['report_type'] == 'equipment':
-                print('equipment')
+            elif form.cleaned_data['report_type'] == 'revenue':
+                if request.POST.get('month') and request.POST.get('year') and request.POST.get('batch'):
+                    query = Q(
+                        registration_date__month=request.POST.get('month'),
+                        registration_date__year=request.POST.get('year'),
+                        batch=request.POST.get('batch')
+                    )
+                elif request.POST.get('month') and request.POST.get('year'):
+                    query = Q(
+                        registration_date__month=request.POST.get('month'),
+                        registration_date__year=request.POST.get('year')
+                    )
+                elif request.POST.get('month') and request.POST.get('batch'):
+                    query = Q(
+                        registration_date__month=request.POST.get('month'),
+                        batch=request.POST.get('batch')
+                    )
+                elif request.POST.get('year') and request.POST.get('batch'):
+                    query = Q(
+                        registration_date__year=request.POST.get('year'),
+                        batch=request.POST.get('batch')
+                    )
+                elif request.POST.get('month'):
+                    query = Q(
+                        registration_date__month=request.POST.get('month')
+                    )
+                elif request.POST.get('year'):
+                    query = Q(
+                        registration_date__year=request.POST.get('year')
+                    )
+                elif request.POST.get('batch'):
+                    query = Q(
+                        batch=request.POST.get('batch')
+                    )
+                else:
+                    query = Q()
+                if request.user.is_superuser:
+                    members = Member.objects.filter(query)
+                else:
+                    members = Member.objects.filter(query, room=request.user.manager.room)
+                # django.core.exceptions.FieldError: Cannot resolve keyword 'member' into field. Choices are: id, payment_amount, payment_date, payment_period, user, user_id
+                user_ids = []
+                for member in members:
+                    user_ids.append(member.user.id)
+                payments = Payments.objects.filter(user_id__in=user_ids)
+                payment_amount = 0
+                for payment in payments:
+                    payment_amount += payment.payment_amount
+                context = {
+                    'form': form,
+                    'total_revenue': convert_to_vnd_string(payment_amount),
+                    'total_members': len(members),
+                    'subs_end_today_count': get_notification_count(),
+                    'month': request.POST.get('month'),
+                    'year': request.POST.get('year'),
+
+                }
+                return render(request, 'revenue.html', context)
     else:
         form = GenerateReportForm()
     return render(request, 'reports.html', {'form': form, 'subs_end_today_count': get_notification_count()})
-

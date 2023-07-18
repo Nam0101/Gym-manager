@@ -121,7 +121,7 @@ def create_user(request, member):
     password = member.mobile_number
     user = User.objects.create_user(username=username, password=password)
     member.user = user
-    model_save(member)
+    member.save()
 
 
 def add_member(request):
@@ -145,12 +145,14 @@ def add_member(request):
             current_room = Manager.objects.get(user=current_user).room
             temp.room = current_room
             temp.user = user
-            temp.save()
+            try:
+                temp.save()
+            except Exception as e:
+                print(e)
+                return redirect('add_member')
             group = Group.objects.get(name='MEMBER')
             user.groups.add(group)
             success = 'Successfully Added Member'
-            # member = Member.objects.last()
-
             if temp.fee_status == 'paid':
                 payments = Payments(
                     user=temp,
@@ -159,7 +161,7 @@ def add_member(request):
                     payment_amount=temp.amount
                 )
                 payments.save()
-
+            # member = Member.objects.last()
             form = AddMemberForm()
             member = Member.objects.last()
         else:
@@ -185,13 +187,6 @@ def view_member_detail(request):
 
 
 def view_training_history(request):
-    # member = Member.objects.get(user=request.user)
-    # training_history = Training_history.objects.filter(member=member)
-    # context = {
-    #     'member': member,
-    #     'training_history': training_history,
-    # }
-    # kiểm tra xem user có phải là member hay trainer
     current_user = request.user
     try:
         member = Member.objects.get(user=current_user)
@@ -221,7 +216,6 @@ def search_member(request):
             result = Member.objects.filter(first_name__contains=first_name)
 
         view_all = Member.objects.all()
-        # get all members according to their batches
         evening = Member.objects.filter(batch='evening')
         morning = Member.objects.filter(batch='morning')
 
@@ -240,7 +234,6 @@ def search_member(request):
 
 
 def delete_member(request, id):
-    print(id)
     Member.objects.filter(pk=id).delete()
     return redirect('view_member')
 
