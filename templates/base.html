@@ -40,6 +40,7 @@
                             <a class="dropdown-item text-primary my-1 py-2" href="{% url 'view_member' %}">View All Members</a>
                         </div>
                     </li>
+                    {% if permission_level == 'admin'  %}
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown"
                            aria-haspopup="true" aria-expanded="false">
@@ -50,6 +51,7 @@
                             <a class="dropdown-item text-primary my-1 py-2" href="{% url 'view_manager' %}">View Manager</a>
                         </div>
                     </li>
+                        {% endif %}
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown"
                            aria-haspopup="true" aria-expanded="false">
@@ -61,9 +63,9 @@
                         </div>
                     </li>
                     {% if permission_level == 'manager' %}
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'view_member' %}">Business statistics</a>
-                    </li>
+                        <li class="nav-item {% if request.resolver_match.url_name == 'reports' %} active {% endif %}">
+                            <a class="nav-link" href="{% url 'reports' %}">Reports</a>
+                        </li>
                         <li class="nav-item">
                             <a class="nav-link" href="{% url 'notifications' %}">Notifications <span class="badge badge-success">{{ subs_end_today_count }}</span></a>
                         </li>

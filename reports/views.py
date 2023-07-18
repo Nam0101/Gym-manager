@@ -27,7 +27,7 @@ def export_all(user_obj):
     return response
 
 
-def reports(request):
+def report_revenue(request):
     context = {}
     if request.method == 'POST':
         form = GenerateReportForm(request.POST)
@@ -53,24 +53,81 @@ def reports(request):
                     registration_date__year=request.POST.get('year'),
                     batch=request.POST.get('batch')
                 )
-            else:
+            elif request.POST.get('month'):
                 query = Q(
-                    registration_date__year=request.POST.get('year'),
+                    registration_date__month=request.POST.get('month')
                 )
-            users = None
-            if request.user.is_superuser:
-                users = Member.objects.filter(query)
+            elif request.POST.get('year'):
+                query = Q(
+                    registration_date__year=request.POST.get('year')
+                )
+            elif request.POST.get('batch'):
+                query = Q(
+                    batch=request.POST.get('batch')
+                )
             else:
-                users = Member.objects.filter(query, room=request.user.manager.room)
-            if users is not None:
-                if 'export' in request.POST:
-                    return export_all(users)
-                context = {
-                    'users': users,
-                    'form': form,
-                    'subs_end_today_count': get_notification_count(),
-                }
-                return render(request, 'reports.html', context)
+                query = Q()
+            members = Member.objects.filter(query)
+            payment_amount = 0
+            for member in members:
+                payment_amount += member.payment_amount
+            context['members'] = members
+            context['form'] = form
+            context['total_revenue'] = payment_amount
+            context['total_members'] = len(members)
+            return render(request, 'revenue.html', context)
+    else:
+        form = GenerateReportForm()
+        context['form'] = form
+        return render(request, 'revenue.html', context)
+
+def reports(request):
+    context = {}
+    if request.method == 'POST':
+        form = GenerateReportForm(request.POST)
+        if form.is_valid():
+            if form.cleaned_data['report_type'] == 'member':
+                if request.POST.get('month') and request.POST.get('year') and request.POST.get('batch'):
+                    query = Q(
+                        registration_date__month=request.POST.get('month'),
+                        registration_date__year=request.POST.get('year'),
+                        batch=request.POST.get('batch')
+                    )
+                elif request.POST.get('month') and request.POST.get('year'):
+                    query = Q(
+                        registration_date__month=request.POST.get('month'),
+                        registration_date__year=request.POST.get('year')
+                    )
+                elif request.POST.get('month') and request.POST.get('batch'):
+                    query = Q(
+                        registration_date__month=request.POST.get('month'),
+                        batch=request.POST.get('batch')
+                    )
+                elif request.POST.get('year') and request.POST.get('batch'):
+                    query = Q(
+                        registration_date__year=request.POST.get('year'),
+                        batch=request.POST.get('batch')
+                    )
+                else:
+                    query = Q(
+                        registration_date__year=request.POST.get('year'),
+                    )
+                users = None
+                if request.user.is_superuser:
+                    users = Member.objects.filter(query)
+                else:
+                    users = Member.objects.filter(query, room=request.user.manager.room)
+                if users is not None:
+                    if 'export' in request.POST:
+                        return export_all(users)
+                    context = {
+                        'users': users,
+                        'form': form,
+                        'subs_end_today_count': get_notification_count(),
+                    }
+                    return render(request, 'reports.html', context)
+            elif form.cleaned_data['report_type'] == 'equipment':
+                print('equipment')
     else:
         form = GenerateReportForm()
     return render(request, 'reports.html', {'form': form, 'subs_end_today_count': get_notification_count()})

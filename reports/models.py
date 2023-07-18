@@ -19,6 +19,7 @@ BATCH = (
 REPORT_CHOICES = (
     ('member', 'Member'),
     ('equipment', 'Equipment'),
+    ('revenue', 'Revenue')
 )
 MONTHS_CHOICES = tuple(zip(range(1, 13), (calendar.month_name[i] for i in range(1, 13))))
 

@@ -12,6 +12,7 @@ class Trainer(models.Model):
     dob = models.DateField(default='dd/mm/yyyy')
     start_work = models.DateField(auto_now_add=True)
     photo = models.FileField(upload_to='photos/', blank=True)
+    user = models.OneToOneField(User, on_delete=models.CASCADE, null=True, blank=True)
 
     def __str__(self):
         return self.trainer_name

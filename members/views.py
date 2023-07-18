@@ -1,3 +1,6 @@
+from django.views.generic import ListView
+from django.contrib.auth.decorators import login_required
+from django.db.models import Q
 import csv
 import datetime
 
@@ -16,6 +19,7 @@ from equipment.models import Room
 from notifications.config import get_notification_count
 from notifications.config import my_handler
 from payments.models import Payments
+from trainers.models import Trainer
 from .models import Member, Manager, Training_history
 from .forms import AddMemberForm, SearchForm, AddManagerForm, UpdateMemberGymForm, UpdateMemberInfoForm
 
@@ -79,6 +83,7 @@ def view_manager(request):
     return render(request, 'view_manager.html', context)
 
 
+@login_required
 def view_member(request):
     current_user = request.user
     if current_user.is_superuser:
@@ -87,20 +92,18 @@ def view_member(request):
         morning = Member.objects.filter(batch='morning', stop=0).order_by('first_name')
         stopped = Member.objects.filter(stop=1).order_by('first_name')
     else:
-        current_manager = Manager.objects.get(user=current_user)
+        current_manager = Manager.objects.select_related('room').get(user=current_user)
         current_room = current_manager.room
         view_all = Member.objects.filter(room=current_room)
         evening = Member.objects.filter(batch='evening', stop=0, room=current_room).order_by('first_name')
         morning = Member.objects.filter(batch='morning', stop=0, room=current_room).order_by('first_name')
         stopped = Member.objects.filter(stop=1, room=current_room).order_by('first_name')
     paginator = Paginator(view_all, 100)
+    page = request.GET.get('page', 1)
     try:
-        page = request.GET.get('page', 1)
         view_all = paginator.page(page)
-    except PageNotAnInteger:
-        view_all = paginator.page(1)
-    except EmptyPage:
-        view_all = paginator.page(paginator.num_pages)
+    except (PageNotAnInteger, EmptyPage):
+        view_all = paginator.get_page(1)
     search_form = SearchForm()
     context = {
         'all': view_all,
@@ -182,12 +185,28 @@ def view_member_detail(request):
 
 
 def view_training_history(request):
-    member = Member.objects.get(user=request.user)
-    training_history = Training_history.objects.filter(member=member)
-    context = {
-        'member': member,
-        'training_history': training_history,
-    }
+    # member = Member.objects.get(user=request.user)
+    # training_history = Training_history.objects.filter(member=member)
+    # context = {
+    #     'member': member,
+    #     'training_history': training_history,
+    # }
+    # kiểm tra xem user có phải là member hay trainer
+    current_user = request.user
+    try:
+        member = Member.objects.get(user=current_user)
+        training_history = Training_history.objects.filter(member=member)
+        context = {
+            'member': member,
+            'training_history': training_history,
+        }
+    except Member.DoesNotExist:
+        trainer = Trainer.objects.get(user=current_user)
+        training_history = Training_history.objects.filter(trainer=trainer)
+        context = {
+            'trainer': trainer,
+            'training_history': training_history,
+        }
     return render(request, 'view_training_history.html', context)
 
 
