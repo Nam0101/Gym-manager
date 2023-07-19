@@ -6,3 +6,57 @@
 .navbar-custom .navbar-nav .nav-link {
     color: #ffffff;
 }
+/* Add this to your existing custom.css or create a new footer.css file */
+
+/* Footer section */
+.footer {
+    background-color: #333; /* Set the background color of the footer */
+    color: #fff; /* Set the text color of the footer */
+    padding: 30px 0;
+}
+
+/* Footer headings */
+.footer h3 {
+    color: #ffca18; /* Set the color for footer headings */
+}
+
+/* Footer links */
+.footer a {
+    color: #fff; /* Set the color for footer links */
+}
+
+/* Footer links on hover */
+.footer a:hover {
+    color: #ffca18; /* Set the color for footer links on hover */
+}
+
+/* Contact info list */
+.footer .contact-info li {
+    margin-bottom: 10px; /* Add some spacing between contact info items */
+}
+
+/* Social links list */
+.footer .social-links li {
+    margin-bottom: 10px; /* Add some spacing between social links */
+}
+
+/* Footer copyright text */
+.footer p {
+    color: #bbb; /* Set the color for the copyright text */
+    margin-top: 20px; /* Add some spacing above the copyright text */
+}
+
+html {
+    height: 100%;
+}
+
+body {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+.container {
+    flex: 1;
+}
+

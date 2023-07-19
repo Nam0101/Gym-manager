@@ -176,11 +176,10 @@ def reports(request):
                     members = Member.objects.filter(query)
                 else:
                     members = Member.objects.filter(query, room=request.user.manager.room)
-                # django.core.exceptions.FieldError: Cannot resolve keyword 'member' into field. Choices are: id, payment_amount, payment_date, payment_period, user, user_id
-                user_ids = []
+                member_ids = []
                 for member in members:
-                    user_ids.append(member.user.id)
-                payments = Payments.objects.filter(user_id__in=user_ids)
+                    member_ids.append(member.member_id)
+                payments = Payments.objects.filter(user_id__in=member_ids)
                 payment_amount = 0
                 for payment in payments:
                     payment_amount += payment.payment_amount

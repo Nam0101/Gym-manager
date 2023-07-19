@@ -10,3 +10,11 @@
   <img src="{{ wallpaper.photo }}" class="img-fluid">
 </div>
 {% endblock %}
+
+<div class ="footer">
+    {% block footer %}
+        {% if permission_level == 'reviews' %}
+            {% include 'footer.html' %}
+        {% endif %}
+    {% endblock %}
+</div>

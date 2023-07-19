@@ -20,7 +20,7 @@ from notifications.config import get_notification_count
 from notifications.config import my_handler
 from payments.models import Payments
 from trainers.models import Trainer
-from .models import Member, Manager, Training_history
+from .models import Member, Manager, Training_history, Subscription
 from .forms import AddMemberForm, SearchForm, AddManagerForm, UpdateMemberGymForm, UpdateMemberInfoForm
 
 
@@ -159,12 +159,20 @@ def add_member(request):
             current_user = request.user
             current_room = Manager.objects.get(user=current_user).room
             temp.room = current_room
+            month_paid = int(temp.subscription_period)
+            if month_paid % 12 == 0:
+                price = Subscription.objects.get(subscription_type=temp.subscription_type).price_per_year
+                month_paid = month_paid / 12
+            else:
+                price = Subscription.objects.get(subscription_type=temp.subscription_type).price_per_month
+            temp.amount = month_paid * price
             temp.user = user
             group = Group.objects.get(name='MEMBER')
             user.groups.add(group)
             member = temp
             member.save()
             success = 'Successfully Added Member'
+
             if temp.fee_status == 'paid':
                 payments = Payments(
                     user=temp,

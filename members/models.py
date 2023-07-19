@@ -26,6 +26,7 @@ SUBSCRIPTION_PERIOD_CHOICES = (
     ('10', '10 Months'),
     ('11', '11 Months'),
     ('12', '12 Months'),
+    ('24', '24 Months'),
 )
 
 FEE_STATUS = (
@@ -42,6 +43,17 @@ BATCH = (
     ('morning', 'Morning'),
     ('evening', 'Evening'),
 )
+
+
+class Subscription(models.Model):
+    subscription_id = models.AutoField(primary_key=True)
+    subscription_type = models.CharField('Subscription Type', max_length=50)
+    status = models.IntegerField(choices=STATUS, default=0)
+    price_per_month = models.IntegerField('Price Per Month', default=0)
+    price_per_year = models.IntegerField('Price Per Year', default=0)
+
+    def __str__(self):
+        return self.subscription_type
 
 
 class Manager(models.Model):
@@ -75,7 +87,7 @@ class Member(models.Model):
     subscription_type = models.CharField(
         'Subscription Type',
         max_length=30,
-        choices=SUBSCRIPTION_TYPE_CHOICES,
+        choices=Subscription.objects.filter(status=0).values_list('subscription_type', 'subscription_type'),
         default=SUBSCRIPTION_TYPE_CHOICES[0][0]
     )
     subscription_period = models.CharField(
@@ -84,7 +96,7 @@ class Member(models.Model):
         choices=SUBSCRIPTION_PERIOD_CHOICES,
         default=SUBSCRIPTION_PERIOD_CHOICES[0][0]
     )
-    amount = models.CharField(max_length=30)
+    amount = models.CharField(max_length=30,blank=True, default='0')
     fee_status = models.CharField(
         'Fee Status',
         max_length=30,

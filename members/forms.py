@@ -35,11 +35,7 @@ class AddMemberForm(ModelForm):
             else:
                 raise forms.ValidationError('Mobile number should be 10 digits long.')
 
-    def clean_amount(self):
-        amount = self.cleaned_data.get('amount')
-        if not amount.isdigit():
-            raise forms.ValidationError('Amount should be a number')
-        return amount
+
 
     def clean(self):
         cleaned_data = super().clean()
@@ -73,22 +69,16 @@ class UpdateMemberGymForm(forms.Form):
     subscription_type = forms.ChoiceField(choices=SUBSCRIPTION_TYPE_CHOICES)
     subscription_period = forms.ChoiceField(choices=SUBSCRIPTION_PERIOD_CHOICES)
     fee_status = forms.ChoiceField(choices=FEE_STATUS)
-    amount = forms.CharField()
     batch = forms.ChoiceField(choices=BATCH)
     stop = forms.ChoiceField(label='Status', choices=STATUS)
 
-    def clean_amount(self):
-        amount = self.cleaned_data.get('amount')
-        if not amount.isdigit():
-            raise forms.ValidationError('Amount should be a number')
-        return amount
 
 
 class UpdateMemberInfoForm(forms.Form):
     first_name = forms.CharField(max_length=50)
     last_name = forms.CharField(max_length=50)
     photo = forms.FileField(label='Update Photo', required=False)
-    dob = forms.DateField(widget=forms.DateInput(attrs={'class': 'datepicker        form-control', 'type': 'date'}), )
+    dob = forms.DateField(widget=forms.DateInput(attrs={'class': 'datepicker form-control', 'type': 'date'}), )
 
 
 class AddManagerForm(forms.ModelForm):

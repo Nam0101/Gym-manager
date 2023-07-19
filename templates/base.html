@@ -75,7 +75,7 @@
             <ul class="navbar-nav ml-auto">
                 {% if permission_level == 'reviews' %}
                     <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown"
+                        <a class="nav-link dropdown-toggle" href="{% url 'add_review' %}" id="navbarDropdown" role="button" data-toggle="dropdown"
                            aria-haspopup="true" aria-expanded="false">
                             Review
                         </a>
@@ -119,7 +119,13 @@
 
     {% endblock %}
 </div>
-
+{% block footer %}
+        {% if permission_level == 'reviews' %}
+            <footer class="footer bg-dark text-light py-4">
+                    {% include 'footer.html' %}
+            </footer>
+        {% endif %}
+{% endblock %}
 <!-- Optional JavaScript -->
 <!-- jQuery first, then Popper.js, then Bootstrap JS -->
 <script src="{% static 'js/jquery.min.js' %}"></script>
@@ -129,3 +135,4 @@
 {% block javascript %}{% endblock %}
 </body>
 </html>
+

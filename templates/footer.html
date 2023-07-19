@@ -1,0 +1,71 @@
+{% load static %}
+<!doctype html>
+<html lang="en">
+<head>
+    <link rel="shortcut icon" type="image/png" href="{% static 'HUST_logo.jpg' %}"/>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
+
+    <!-- Custom -->
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <link rel="stylesheet" href="{% static 'css/font-awesome.min.css' %}">
+    <link rel="stylesheet" href="{% static 'css/custom.css' %}">
+
+    <title>{% block title %}{% endblock %}</title>
+    <style>
+        body {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .footer {
+            margin-top: auto;
+        }
+    </style>
+</head>
+<body>
+
+
+    <footer class="footer bg-dark text-light py-4">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-4">
+                    <h3>About Us</h3>
+                    <p>Gym manager system by HUST students.</p>
+                </div>
+                <div class="col-md-4">
+                    <h3>Contact Us</h3>
+                    <ul class="list-unstyled contact-info">
+                        <li>Phone: 0335315368</li>
+                        <li>Email: nam.nv205106@gym.com</li>
+                        <li>Address: 1 Dai Co Viet st, Ha Noi</li>
+                    </ul>
+                </div>
+                <div class="col-md-4">
+                    <h3>Follow Us</h3>
+                    <ul class="list-unstyled social-links">
+                        <li><a href="https://www.facebook.com/nam.nv5106" target="_blank">Facebook</a></li>
+                        <li><a href="https://www.facebook.com/nam.nv5106" target="_blank">Twitter</a></li>
+                        <li><a href="https://www.facebook.com/nam.nv5106" target="_blank">Instagram</a></li>
+                    </ul>
+                </div>
+            </div>
+            <hr class="bg-light">
+            <p class="text-center mb-0">Copyright © 2023 HUST Gym Manager. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script src="{% static 'js/jquery.min.js' %}"></script>
+    <script src="{% static 'js/popper.min.js' %}"></script>
+    <script src="{% static 'js/bootstrap.min.js' %}"></script>
+    <script src="{% static 'js/bootstrap.bundle.js' %}"></script>
+    {% block javascript %}{% endblock %}
+</body>
+</html>

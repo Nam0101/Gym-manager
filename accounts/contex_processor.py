@@ -13,5 +13,4 @@ def contex_processor(request):
         context = {'permission_level': 'all'}
     else:
         context = {'permission_level': 'none'}
-    # print(context)
     return context
