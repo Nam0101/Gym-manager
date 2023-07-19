@@ -14,7 +14,7 @@
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
     <link rel="stylesheet" href="{% static 'css/font-awesome.min.css' %}">
     <link rel="stylesheet" href="{% static 'css/custom.css' %}">
-
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
     <title>{% block title %}{% endblock %}</title>
 </head>
 <body>
@@ -40,7 +40,7 @@
                             <a class="dropdown-item text-primary my-1 py-2" href="{% url 'view_member' %}">View All Members</a>
                         </div>
                     </li>
-                    {% if permission_level == 'admin'  %}
+                    {% if permission_level == 'all'  %}
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown"
                            aria-haspopup="true" aria-expanded="false">

@@ -42,6 +42,7 @@ STATUS = (
 BATCH = (
     ('morning', 'Morning'),
     ('evening', 'Evening'),
+    ('both', 'All Day'),
 )
 
 
@@ -96,7 +97,7 @@ class Member(models.Model):
         choices=SUBSCRIPTION_PERIOD_CHOICES,
         default=SUBSCRIPTION_PERIOD_CHOICES[0][0]
     )
-    amount = models.CharField(max_length=30,blank=True, default='0')
+    amount = models.CharField(max_length=30, blank=True, default='0')
     fee_status = models.CharField(
         'Fee Status',
         max_length=30,
@@ -120,8 +121,8 @@ class Member(models.Model):
 
 class Training_history(models.Model):
     member = models.ForeignKey(Member, on_delete=models.CASCADE)
-    trainer = models.ForeignKey(Trainer, on_delete=models.CASCADE)
-    training_date = models.DateField(auto_now_add=True)
+    trainer = models.ForeignKey(Trainer, on_delete=models.CASCADE, blank=True, null=True)
+    training_date = models.DateField(default='dd/mm/yyyy')
 
     def __str__(self):
         return self.member.first_name + ' ' + self.member.last_name + ' - ' + self.trainer.trainer_name

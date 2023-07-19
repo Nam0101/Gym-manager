@@ -51,7 +51,9 @@ INSTALLED_APPS = [
     'payments',
     'equipment',
     'review',
-    'trainers'
+    'trainers',
+    'django_extensions',
+
 ]
 
 MIDDLEWARE = [

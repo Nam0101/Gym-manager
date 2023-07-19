@@ -88,15 +88,15 @@ def view_member(request):
     current_user = request.user
     if current_user.is_superuser:
         view_all = Member.objects.all()
-        evening = Member.objects.filter(batch='evening', stop=0).order_by('first_name')
-        morning = Member.objects.filter(batch='morning', stop=0).order_by('first_name')
+        evening = Member.objects.filter(Q(batch='evening') | Q(batch='both'), stop=0).order_by('first_name')
+        morning = Member.objects.filter(Q(batch='morning') | Q(batch='both'), stop=0).order_by('first_name')
         stopped = Member.objects.filter(stop=1).order_by('first_name')
     else:
         current_manager = Manager.objects.select_related('room').get(user=current_user)
         current_room = current_manager.room
         view_all = Member.objects.filter(room=current_room)
-        evening = Member.objects.filter(batch='evening', stop=0, room=current_room).order_by('first_name')
-        morning = Member.objects.filter(batch='morning', stop=0, room=current_room).order_by('first_name')
+        evening = Member.objects.filter(Q(batch='evening') | Q(batch='both'), stop=0, room=current_room).order_by('first_name')
+        morning = Member.objects.filter(Q(batch='morning') | Q(batch='both'), stop=0, room=current_room).order_by('first_name')
         stopped = Member.objects.filter(stop=1, room=current_room).order_by('first_name')
     paginator = Paginator(view_all, 100)
     page = request.GET.get('page', 1)
@@ -153,8 +153,8 @@ def add_member(request):
                 months=int(request.POST.get('subscription_period')))
             if request.POST.get('fee_status') == 'pending':
                 temp.notification = 1
-            username = temp.email
             password = temp.mobile_number
+            username = temp.mobile_number
             user = User.objects.create_user(username=username, password=password)
             current_user = request.user
             current_room = Manager.objects.get(user=current_user).room
@@ -214,6 +214,7 @@ def view_training_history(request):
             'member': member,
             'training_history': training_history,
         }
+        return render(request, 'view_training_history_member.html', context)
     except Member.DoesNotExist:
         trainer = Trainer.objects.get(user=current_user)
         training_history = Training_history.objects.filter(trainer=trainer)
@@ -221,7 +222,7 @@ def view_training_history(request):
             'trainer': trainer,
             'training_history': training_history,
         }
-    return render(request, 'view_training_history.html', context)
+        return render(request, 'view_training_history.html', context)
 
 
 def search_member(request):
@@ -237,7 +238,10 @@ def search_member(request):
         view_all = Member.objects.all()
         evening = Member.objects.filter(batch='evening')
         morning = Member.objects.filter(batch='morning')
-
+        both = Member.objects.filter(batch='both')
+        # member in both is in both morning and evening batch
+        evening = evening.exclude(pk__in=both)
+        morning = morning.exclude(pk__in=both)
         context = {
             'all': view_all,
             'morning': morning,

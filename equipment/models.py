@@ -35,6 +35,9 @@ class Equipment(models.Model):
     class Meta:
         ordering = ['equipment_name']
 
+    def __str__(self):
+        return self.equipment_name
+
 
 class AddEquipmentForm(ModelForm):
     def __init__(self, *args, **kwargs):
