@@ -17,12 +17,13 @@ def my_handler(sender, instance, created, **kwargs):
     members_today = Member.objects.filter(query)
 
     count = 0
-    # make notification flag to 1
     for member in members_today | members_before:
         if member.notification != 0:
             member.notification = 1
             member.fee_status = 'pending'
+            post_save.disconnect(my_handler, sender=Member)  # disconnect signal
             member.save()
+            post_save.connect(my_handler, sender=Member)  # reconnect signal
     return
 
 

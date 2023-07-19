@@ -123,6 +123,21 @@ def create_user(request, member):
     member.user = user
     member.save()
 
+# def save_member(request, member):
+#     member.first_name = request.POST.get('first_name').capitalize()
+#     member.last_name = request.POST.get('last_name').capitalize()
+#     member.registration_upto = parser.parse(request.POST.get('registration_date')) + delta.relativedelta(
+#         months=int(request.POST.get('subscription_period')))
+#     member.subscription_type = request.POST.get('subscription_type')
+#     member.batch = request.POST.get('batch')
+#     member.fee_status = request.POST.get('fee_status')
+#     member.mobile_number = request.POST.get('mobile_number')
+#     member.email = request.POST.get('email')
+#     member.address = request.POST.get('address')
+#     member.admitted_on = parser.parse(request.POST.get('admitted_on'))
+#     member.fee = request.POST.get('fee')
+#     member.save()
+#
 
 def add_member(request):
     view_all = Member.objects.all()
@@ -145,9 +160,10 @@ def add_member(request):
             current_room = Manager.objects.get(user=current_user).room
             temp.room = current_room
             temp.user = user
-            temp.save()
             group = Group.objects.get(name='MEMBER')
             user.groups.add(group)
+            member = temp
+            member.save()
             success = 'Successfully Added Member'
             if temp.fee_status == 'paid':
                 payments = Payments(
