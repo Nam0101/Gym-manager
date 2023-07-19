@@ -22,11 +22,7 @@ def my_handler(sender, instance, created, **kwargs):
         if member.notification != 0:
             member.notification = 1
             member.fee_status = 'pending'
-            try:
-                member.save()
-            except Exception as e:
-                print(e)
-                return
+            member.save()
     return
 
 

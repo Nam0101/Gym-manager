@@ -145,11 +145,7 @@ def add_member(request):
             current_room = Manager.objects.get(user=current_user).room
             temp.room = current_room
             temp.user = user
-            try:
-                temp.save()
-            except Exception as e:
-                print(e)
-                return redirect('add_member')
+            temp.save()
             group = Group.objects.get(name='MEMBER')
             user.groups.add(group)
             success = 'Successfully Added Member'
@@ -161,7 +157,6 @@ def add_member(request):
                     payment_amount=temp.amount
                 )
                 payments.save()
-            # member = Member.objects.last()
             form = AddMemberForm()
             member = Member.objects.last()
         else:

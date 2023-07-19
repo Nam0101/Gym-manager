@@ -100,7 +100,6 @@ class Member(models.Model):
     notification = models.IntegerField(default=2, blank=True)
     stop = models.IntegerField('Status', choices=STATUS, default=STATUS[0][0], blank=True)
     user = models.OneToOneField(User, on_delete=models.CASCADE, null=True, blank=True)
-    trainer = models.ForeignKey(Trainer, on_delete=models.SET_NULL, null=True, blank=True, default=None)
     room = models.ForeignKey('equipment.Room', on_delete=models.CASCADE, blank=True, default=DEFAULT_ROOM_ID)
 
     def __str__(self):
