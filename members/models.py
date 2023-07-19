@@ -86,7 +86,7 @@ class Member(models.Model):
     dob = models.DateField(default='dd/mm/yyyy')
     subscription_type = models.CharField(
         'Subscription Type',
-        max_length=30,
+        max_length=100,
         choices=Subscription.objects.filter(status=0).values_list('subscription_type', 'subscription_type'),
         default=SUBSCRIPTION_TYPE_CHOICES[0][0]
     )

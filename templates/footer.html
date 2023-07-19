@@ -1,21 +1,20 @@
 {% load static %}
 <!doctype html>
 <html lang="en">
-<head>
-    <link rel="shortcut icon" type="image/png" href="{% static 'HUST_logo.jpg' %}"/>
-    <!-- Required meta tags -->
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-
-    <!-- Bootstrap CSS -->
-    <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
-
-    <!-- Custom -->
-    <link rel="stylesheet" href="{% static 'css/style.css' %}">
-    <link rel="stylesheet" href="{% static 'css/font-awesome.min.css' %}">
-    <link rel="stylesheet" href="{% static 'css/custom.css' %}">
-
-    <title>{% block title %}{% endblock %}</title>
+{#<head>#}
+{#    <link rel="shortcut icon" type="image/png" href="{% static 'HUST_logo.jpg' %}"/>#}
+{#    <!-- Required meta tags -->#}
+{#    <meta charset="utf-8">#}
+{#    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">#}
+{##}
+{#    <!-- Bootstrap CSS -->#}
+{#    <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">#}
+{##}
+{#    <!-- Custom -->#}
+{#    <link rel="stylesheet" href="{% static 'css/style.css' %}">#}
+{#    <link rel="stylesheet" href="{% static 'css/font-awesome.min.css' %}">#}
+{#    <link rel="stylesheet" href="{% static 'css/custom.css' %}">#}
+{##}
     <style>
         body {
             min-height: 100vh;
@@ -27,7 +26,7 @@
             margin-top: auto;
         }
     </style>
-</head>
+{#</head>#}
 <body>
 
 
@@ -62,10 +61,10 @@
 
     <!-- Optional JavaScript -->
     <!-- jQuery first, then Popper.js, then Bootstrap JS -->
-    <script src="{% static 'js/jquery.min.js' %}"></script>
-    <script src="{% static 'js/popper.min.js' %}"></script>
-    <script src="{% static 'js/bootstrap.min.js' %}"></script>
-    <script src="{% static 'js/bootstrap.bundle.js' %}"></script>
-    {% block javascript %}{% endblock %}
+{#    <script src="{% static 'js/jquery.min.js' %}"></script>#}
+{#    <script src="{% static 'js/popper.min.js' %}"></script>#}
+{#    <script src="{% static 'js/bootstrap.min.js' %}"></script>#}
+{#    <script src="{% static 'js/bootstrap.bundle.js' %}"></script>#}
+{#    {% block javascript %}{% endblock %}#}
 </body>
 </html>
